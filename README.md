@@ -71,7 +71,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/idork.git
+git clone https://github.com/iMorgann/iDork.git
 cd idork
 
 # Install dependencies
@@ -92,7 +92,7 @@ pip install googlesearch-python  # For Google search support
 pip install tkinter              # For file picker (usually pre-installed)
 
 # Download and run
-wget https://raw.githubusercontent.com/yourusername/idork/main/idork.py
+wget https://raw.githubusercontent.com/iMorgann/idork/main/idork.py
 python idork.py
 ```
 
@@ -301,7 +301,7 @@ We welcome contributions! Here's how you can help:
 ### Development Setup
 ```bash
 # Fork and clone the repository
-git clone https://github.com/yourusername/idork.git
+git clone https://github.com/iMorgann/idork.git
 cd idork
 
 # Create development branch
@@ -324,14 +324,14 @@ python idork.py
 
 ## 📚 Documentation
 
-- **[Wiki](https://github.com/yourusername/idork/wiki)** - Detailed guides and tutorials
+- **[Wiki](https://github.com/iMorgann/idork/wiki)** - Detailed guides and tutorials
 - **[API Reference](docs/api.md)** - For developers integrating iDork
 - **[Dork Database](docs/dorks.md)** - Collection of useful dorks
 - **[FAQ](docs/faq.md)** - Frequently asked questions
 
 ## 🎖️ Credits
 
-**Developed by:** [root](https://github.com/yourusername) ([@rootbck](https://t.me/rootbck))
+**Developed by:** [root](https://github.com/iMorgann) ([@rootbck](https://t.me/rootbck))
 
 ### Special Thanks
 - **DuckDuckGo** for their excellent search API
@@ -345,10 +345,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **🐛 Bug Reports**: [GitHub Issues](https://github.com/yourusername/idork/issues)
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/iMorgann/idork/issues)
 - **💬 Telegram**: [@rootbck](https://t.me/rootbck)
 - **📧 Email**: your.email@example.com
-- **📖 Documentation**: [Wiki](https://github.com/yourusername/idork/wiki)
+- **📖 Documentation**: [Wiki](https://github.com/iMorgann/idork/wiki)
 
 ---
 
@@ -356,6 +356,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⭐ If you find iDork useful, please consider starring the repository! ⭐**
 
-Made with ❤️ by [root](https://github.com/yourusername)
+Made with ❤️ by [root](https://github.com/iMorgann)
 
 </div>
