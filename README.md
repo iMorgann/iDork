@@ -347,7 +347,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **🐛 Bug Reports**: [GitHub Issues](https://github.com/iMorgann/idork/issues)
 - **💬 Telegram**: [@rootbck](https://t.me/rootbck)
-- **📧 Email**: your.email@example.com
+- **📧 Email**: securedbox247@outlook.com
 - **📖 Documentation**: [Wiki](https://github.com/iMorgann/idork/wiki)
 
 ---
