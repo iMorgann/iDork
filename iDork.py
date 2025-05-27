@@ -634,33 +634,74 @@ class URLAnalyzer:
             "order_id", "invoice_id", "customer_id", "account_id", "profile_id",
             "search", "filter", "sort", "order", "limit", "offset", "table", "database",
             "db", "schema", "query", "sql", "where", "having", "group_by",
+            "row", "column", "row_id", "col", "record", "entry_id",
+
             # File Inclusion prone
             "file", "page", "include", "path", "template", "view", "load",
             "doc", "document", "content", "data", "source", "resource",
             "script", "style", "theme", "lang", "locale", "module", "component",
+            "asset", "layout", "handler", "screen", "frame", "renderer",
+
             # Authentication/Authorization
             "user", "username", "login", "pass", "password", "token", "auth",
             "session", "key", "secret", "admin", "role", "level", "access",
             "remember_me", "otp", "mfa", "2fa", "captcha", "csrf_token",
             "api_key", "access_token", "refresh_token", "client_id", "client_secret",
+            "auth_token", "session_token", "authorization", "bearer", "cookie",
+
             # File operations
             "upload", "download", "filename", "filepath", "dir", "directory",
             "folder", "delete", "remove", "edit", "modify", "create",
             "move", "copy", "rename", "archive", "extract", "compress", "decompress",
+            "logfile", "save_path", "path_to_file", "target_file", "output",
+
             # Database operations
             "query", "sql", "search", "filter", "sort", "order", "limit",
             "offset", "table", "database", "db", "schema",
             "join", "union", "intersect", "except", "truncate", "commit", "rollback",
+            "subquery", "view", "proc", "cursor", "function", "routine",
+
             # System commands
             "cmd", "command", "exec", "execute", "run", "system", "shell",
             "ping", "host", "ip", "url", "redirect", "goto",
             "eval", "passthru", "shell_exec", "system_call", "proc_open", "popen",
+            "target", "dns", "netcat", "scan", "script_name",
+
             # Other potentially vulnerable parameters
             "callback_url", "redirect_uri", "origin", "referer",
+            "next", "return", "return_url", "dest", "destination", "forward",
+            "ref", "referrer", "continue", "goto_url", "jump", "back",
+
             # API-related parameters
             "method", "action", "resource", "format",
+            "endpoint", "operation", "interface", "function",
+
             # Additional parameters for modern web applications
-            "_token_anti_forgery"
+            "_token_anti_forgery", "_token", "__csrf", "__token",
+            "__requestverificationtoken", "csrfmiddlewaretoken",
+            "_method", "_http_method", "http_method_override",
+
+            # SSTI / template
+            "expression", "expr", "calculate", "render", "render_template",
+            "tpl", "jinja", "mustache", "handlebars", "template_name",
+
+            # IDOR/Access Control
+            "profile", "target_user", "target_id", "owner_id", "account",
+            "edit_user", "manager_id", "employee_id", "staff_id", "parent_id",
+
+            # API / Web App specific
+            "method", "action", "resource", "format", "mutation", "query_type", "graph",
+            "operation", "_method", "_action", "endpoint", "route", "url_path",
+
+            # Cloud/Mobile/API keys
+            "aws_key", "aws_secret", "s3_bucket", "firebase_token", "gcp_key",
+
+            # Debug / misc
+            "debug", "log", "verbose", "mode", "trace", "report", "callback", "hook",
+
+            # Misc
+            "_token", "_csrf", "_token_anti_forgery", "hash", "code", "signature",
+            "payload", "value", "body", "json", "data", "xml", "soap", "debug", "config"
         }
 
         self.interesting_extensions = {
@@ -668,7 +709,30 @@ class URLAnalyzer:
             "js", "html", "htm", "css", "rb", "erb", "go", "rs", "jar", "war", "ear",
             "conf", "ini", "properties", "yaml", "json", "bak", "old",
             ".c", ".cpp", ".h",
-            ".env"
+            ".env",
+
+            # More dev/infra
+            "lock", "sql", "db", "log", "pkl", "cfg", "crt", "pem", "key",
+            "crt", "der", "cert", "pub", "pem", "jks", "keystore",
+
+            # More temp/backup
+            "swp", "tmp", "temp", "orig", "backup", "bk", "~",
+
+            # More scripting/config
+            "sh", "bat", "ps1", "cmd", "ksh", "tcsh", "zsh",
+            "ts", "jsx", "tsx", "vue", "svelte",
+
+            # Archives
+            "zip", "tar", "gz", "rar", "7z", "xz", "bz2", "iso",
+
+            # Source control
+            ".git", ".svn", ".hg", ".bzr",
+
+            # Logs and crash dumps
+            "core", "dmp", "dump", "crash", "log1", "log2", "trace",
+
+            # Others
+            "sql.gz", "jsonl", "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx"
         }
 
         self.sql_indicators = {
@@ -676,7 +740,15 @@ class URLAnalyzer:
             "alter", "truncate", "exec", "execute", "sp_", "xp_",
             "and", "or", "not", "like", "in", "between", "exists",
             "from", "where", "group by", "having", "order by", "limit", "offset",
-            "sys.", "information_schema.", "master.dbo.", "sa.", "dbo."
+            "sys.", "information_schema.", "master.dbo.", "sa.", "dbo.",
+
+            # Additional indicators
+            "sleep", "benchmark", "load_file", "outfile", "into dumpfile", "into outfile",
+            "char(", "ascii(", "substr(", "substring(", "concat(", "concat_ws(",
+            "hex(", "unhex(", "cast(", "convert(",
+            "--", ";--", ";", "'--", "\"--", "/*", "*/", "#", "--+", "' or '1'='1",
+            "' or 1=1 --", "\" or \"\"=\"", "' or ''='", "' or 1=1#", "' or 1=1--",
+            "1=1", "1=0", "' or 1=0--", "or true--", "or false--"
         }
 
     def analyze_url(self, url: str) -> Dict:
