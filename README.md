@@ -1,343 +1,488 @@
-# iDork v2.0 - Intelligent Dorking Framework
+# iDork Suite v2.0 - Complete Intelligence Gathering Toolkit
 
 <div align="center">
 
-![iDork Logo](https://img.shields.io/badge/iDork-v2.0-blue?style=for-the-badge&logo=search&logoColor=white)
+![iDork Logo](https://img.shields.io/badge/iDork%20Suite-v2.0-blue?style=for-the-badge&logo=search&logoColor=white)
 [![Python](https://img.shields.io/badge/Python-3.7+-blue?style=flat-square&logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey?style=flat-square)](https://github.com/yourusername/idork)
 
-**The most user-friendly Google Dorking tool with multi-search engine support and real-time auto-save**
+**Complete intelligence gathering toolkit with Google Dorking, vulnerability scanning, and URL extraction capabilities**
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Screenshots](#-screenshots) • [Contributing](#-contributing)
+[Features](#-features) • [Installation](#-installation) • [Tools Overview](#-tools-overview) • [Usage](#-usage) • [Screenshots](#-screenshots) • [Contributing](#-contributing)
 
 </div>
 
 ---
 
+## 🛠️ Tools Overview
+
+The iDork Suite consists of three powerful tools designed for comprehensive web intelligence gathering:
+
+### 🔍 **iDork v2.0** (`iDork.py`)
+**Advanced Google Dorking Framework with Risk Analysis**
+- Multi-search engine support (Google, Bing, DuckDuckGo, Yahoo, Yandex)
+- Real-time vulnerability analysis with risk scoring
+- Risk-based file separation (HIGH/MEDIUM/LOW)
+- Auto-save with crash protection
+- Pre-built dork templates
+- Interactive user interface
+
+### 🎯 **IDork Scanner** (`IDork_Scanner.py`)
+**Smart Payload Vulnerability Scanner**
+- SQL injection, XSS, and SSTI payload testing
+- Multi-threading for faster scanning
+- Proxy rotation support
+- Response analysis and snapshots
+- Multiple export formats (TXT, JSON, CSV)
+- Authentication token support
+
+### 📎 **URL Extractor** (`UrlExtractor.py`)
+**Universal URL Extraction Tool**
+- Extract URLs from any file type (TXT, JSON, CSV, logs)
+- Advanced encoding detection
+- Multiple URL pattern matching
+- File picker interface
+- Clean and deduplicated output
+
+---
+
 ## 🌟 Features
 
-### 🔍 **Multi-Search Engine Support**
-- **DuckDuckGo** - Fast and reliable (recommended)
-- **Google** - Most comprehensive results
-- **Bing** - Microsoft's search engine
-- **Yahoo** - Alternative search provider
-- **Yandex** - Russian search engine
+### 🔍 **iDork v2.0 Enhanced Features**
+- **Multi-Search Engine Support** - DuckDuckGo, Google, Bing, Yahoo, Yandex
+- **Vulnerability Analysis** - Real-time risk assessment of discovered URLs
+- **Risk-Based Categorization** - Automatic separation into HIGH/MEDIUM/LOW risk files
+- **Advanced Auto-Save** - Never lose progress with crash protection
+- **Dork Suggestions** - AI-powered dork generation based on findings
+- **Interactive Interface** - No command-line knowledge required
+- **Proxy Support** - Single proxy, file import, or manual list entry
 
-### 💾 **Advanced Auto-Save System**
-- **Real-time saving** every N results (customizable)
-- **Multiple formats** - TXT, JSON, CSV
-- **Crash protection** - Never lose your progress
-- **Live progress tracking** with URL counter
+### 🎯 **IDork Scanner Features**
+- **Smart Payload Testing** - SQLi, XSS, SSTI vulnerability detection
+- **Multi-Threading** - Configurable concurrent scanning
+- **Proxy Picker** - Automatic proxy rotation from list
+- **Response Analysis** - Pattern matching for vulnerability indicators
+- **Flexible Methods** - Support for GET and POST requests
+- **Export Options** - TXT, JSON, CSV output formats
+- **Authentication** - Bearer token support for authenticated scanning
 
-### 🎯 **User-Friendly Interface**
-- **No command-line knowledge required**
-- **Interactive guided setup**
-- **File picker for easy file selection**
-- **Beautiful progress bars and statistics**
+### 📎 **URL Extractor Features**
+- **Universal Extraction** - Works with any file format
+- **Encoding Detection** - Automatic charset detection and handling
+- **Pattern Matching** - Multiple regex patterns for comprehensive extraction
+- **File Picker** - Easy file selection with GUI
+- **Clean Output** - Deduplicated URLs in clean text format
 
-### 🔒 **Proxy Support**
-- **Single proxy** configuration
-- **Proxy file import** (bulk loading)
-- **Automatic proxy rotation**
-- **Failed proxy detection**
-
-### 📝 **Pre-built Dork Templates**
-- **Login Pages** - Find admin panels and login forms
-- **Config Files** - Locate configuration files
-- **Backup Files** - Discover backup and old files
-- **Directory Listings** - Find exposed directories
-- **Error Pages** - Locate error messages and debug info
-- **Sensitive Info** - Find confidential documents
-- **Database Files** - Discover database files
-- **Log Files** - Locate log files
-
-### ✅ **URL Verification**
-- **Accessibility checking** - Test if URLs are live
-- **HTTP status codes** - Get response codes
-- **Threaded verification** - Fast bulk checking
-- **Filter accessible URLs** - Show only working links
+---
 
 ## 📋 Requirements
 
 - **Python 3.7+**
 - **Windows 10/11, macOS 10.14+, or Linux**
-- **Internet connection**
-- **4GB RAM minimum** (8GB recommended for large searches)
+- **Internet connection** (for search tools)
+- **4GB RAM minimum** (8GB recommended for large operations)
 
 ## 🚀 Installation
 
-### Method 1: Quick Install (Recommended)
+### Method 1: Complete Package Install (Recommended)
 
 ```bash
-# Clone the repository
-git clone https://github.com/iMorgann/iDork.git
-cd idork
+# Clone the complete iDork Suite
+git clone https://github.com/iMorgann/iDork-Suite.git
+cd iDork-Suite
 
-# Install dependencies
+# Install all dependencies
 pip install -r requirements.txt
 
-# Run iDork
-python idork.py
+# Verify installation
+python iDork.py --help
+python IDork_Scanner.py
+python UrlExtractor.py
 ```
 
-### Method 2: Manual Setup
+### Method 2: Manual Dependency Installation
 
 ```bash
-# Install required packages individually
-pip install rich duckduckgo-search requests
+# Core dependencies for all tools
+pip install rich requests duckduckgo-search
 
-# Optional dependencies for enhanced features
-pip install googlesearch-python  # For Google search support
-pip install tkinter              # For file picker (usually pre-installed)
+# Additional dependencies
+pip install googlesearch-python chardet  # Optional but recommended
+pip install tkinter                      # Usually pre-installed
 
-# Download and run
-wget https://raw.githubusercontent.com/iMorgann/idork/main/idork.py
-python idork.py
+# Threading and networking (usually included)
+pip install urllib3 concurrent.futures
 ```
 
-### Method 3: Virtual Environment (Recommended for developers)
+### Method 3: Virtual Environment Setup
 
 ```bash
-# Create virtual environment
-python -m venv idork-env
+# Create isolated environment
+python -m venv idork-suite-env
 
-# Activate virtual environment
-# On Windows:
-idork-env\Scripts\activate
-# On macOS/Linux:
-source idork-env/bin/activate
+# Activate environment
+# Windows:
+idork-suite-env\Scripts\activate
+# macOS/Linux:
+source idork-suite-env/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install rich requests duckduckgo-search googlesearch-python chardet
 
-# Run iDork
-python idork.py
+# Run any tool
+python iDork.py
 ```
 
-## 🎮 Usage
+---
 
-### Basic Usage (Interactive Mode)
+## 🎮 Usage Guide
 
-Simply run the script and follow the prompts:
+## 🔍 **iDork v2.0 Usage**
 
+### Interactive Mode (Recommended)
 ```bash
-python idork.py
+# Launch interactive interface
+python iDork.py
+
+# Follow the guided setup:
+# 1. Choose search engine
+# 2. Setup proxy (optional)
+# 3. Select dork source (templates/file/manual/target)
+# 4. Configure search and auto-save
+# 5. Start enhanced search with risk analysis
 ```
 
-### Advanced Usage Examples
-
-#### Using Pre-built Templates
-1. Run `python idork.py`
-2. Choose **templates** as input method
-3. Select a category (e.g., "Login Pages")
-4. Enter target domain (e.g., `example.com`)
-5. Configure search settings
-
-#### Bulk Dorking from File
-1. Create a text file with dorks (one per line):
-   ```
-   site:example.com login
-   site:example.com admin
-   inurl:admin site:example.com
-   filetype:pdf site:example.com
-   ```
-2. Run iDork and choose **file** as input method
-3. Select your dork file using the file picker
-
-#### Target-Specific Scanning
-1. Choose **target** as input method
-2. Enter target domain: `example.com`
-3. Select categories or choose "all"
-4. iDork generates targeted dorks automatically
-
-## 🛠️ Configuration Options
-
-### Search Configuration
-- **Max results per dork**: 1-1000 (default: 100)
-- **Request delay**: 1-30 seconds (default: 8s)
-- **URL verification**: Enable/disable accessibility checking
-- **Search engine**: Choose your preferred engine
-
-### Auto-Save Settings
-- **Enable/disable**: Protect against data loss
-- **Save interval**: Every 50-500 results (default: 50)
-- **Output formats**: TXT, JSON, CSV (multiple selection)
-- **Custom filename**: Set your preferred naming
-
-### Proxy Configuration
-- **Single proxy**: `http://ip:port` or `ip:port`
-- **Proxy file**: Bulk load from text file
-- **Manual list**: Enter multiple proxies interactively
-
-## 📊 Output Formats
-
-### TXT Format (Human-Readable)
+### Dork File Format
+Create a text file with dorks (one per line):
 ```
-iDork v2.0 - Live Search Results
-==================================================
-Started: 2025-05-26 11:28:55
-Auto-save: Every 50 results
-==================================================
-
-1. [DUCKDUCKGO] Admin Login Page
-   URL: https://example.com/admin/login
-   Query: site:example.com login
-   Time: 2025-05-26T11:29:01
---------------------------------------------------
+site:example.com login
+site:example.com admin panel
+inurl:admin site:example.com
+filetype:pdf confidential site:example.com
+"index of" password site:example.com
+intext:"sql syntax" site:example.com
 ```
 
-### JSON Format (Structured Data)
-```json
-{
-  "metadata": {
-    "tool": "iDork v2.0",
-    "started": "2025-05-26T11:28:55",
-    "total_results": 1500
-  },
-  "results": [
-    {
-      "url": "https://example.com/admin",
-      "title": "Admin Panel",
-      "engine": "duckduckgo",
-      "query": "site:example.com admin",
-      "timestamp": "2025-05-26T11:29:01"
-    }
-  ]
+### Risk-Based Output
+iDork automatically categorizes findings:
+- **HIGH RISK** - Potentially vulnerable URLs
+- **MEDIUM RISK** - URLs worth investigating  
+- **LOW RISK** - Probably safe URLs
+
+## 🎯 **IDork Scanner Usage**
+
+### File Picker Mode (Easy)
+```bash
+# Launch with GUI file picker
+python IDork_Scanner.py
+
+# The tool will prompt you for:
+# 1. URL list file selection
+# 2. Thread count configuration
+# 3. Proxy file (optional)
+# 4. Authentication token (optional)
+# 5. POST body template (optional)
+```
+
+### URL List Format
+Create a text file with URLs containing parameters:
+```
+https://example.com/page.php?id=1
+https://target.com/search.php?query=test
+https://site.com/product.asp?pid=123
+https://app.com/user.php?user_id=456
+```
+
+### Scanning Process
+The scanner will:
+1. **Parse URLs** - Extract parameters for testing
+2. **Inject Payloads** - Test SQL injection, XSS, SSTI
+3. **Analyze Responses** - Pattern match for vulnerabilities
+4. **Generate Reports** - Export findings in multiple formats
+
+### Output Files
+- `vulnerable_urls.txt` - Human-readable results
+- `vulnerable_urls.json` - Structured data for tools
+- `vulnerable_urls.csv` - Spreadsheet-compatible format
+
+## 📎 **URL Extractor Usage**
+
+### GUI Mode (Recommended)
+```bash
+# Launch with file picker
+python UrlExtractor.py
+
+# Select input file through GUI
+# Supports: TXT, JSON, CSV, LOG files
+# Output: cleaned URLs in text format
+```
+
+### Command Line Mode
+```bash
+# Extract from specific file
+python UrlExtractor.py input_file.txt
+
+# Output will be saved as: input_file_extracted_urls.txt
+```
+
+### Supported Input Formats
+- **Text Files** - Log files, reports, documentation
+- **JSON Files** - API responses, configuration files
+- **CSV Files** - Spreadsheets, database exports
+- **Log Files** - Server logs, application logs
+
+---
+
+## 📊 Output Examples
+
+### iDork v2.0 Risk-Based Output
+```
+iDork v2.0 Enhanced - High Risk URLs
+============================================
+Generated: 2025-05-27 14:30:15
+Risk Level: HIGH
+Total Results: 23
+============================================
+
+1. [DUCKDUCKGO] Admin Login Panel
+   URL: https://example.com/admin/login.php?redirect=dashboard
+   Query: site:example.com inurl:admin
+   Risk: HIGH - Potentially vulnerable parameters: redirect
+   Vulnerabilities: Vulnerable parameter: redirect
+   Time: 2025-05-27T14:30:22
+```
+
+### IDork Scanner Results
+```
+[+] URL: https://example.com/search.php?q=test
+    Parameter: q
+    Payload: ' OR '1'='1
+    Vulnerability Type: SQLi
+    Status Code: 200
+    Response Snapshot: MySQL syntax error near '' OR '1'='1' at line 1...
+```
+
+### URL Extractor Output
+```
+# Extracted URLs from: logfile.txt
+# Generated: 2025-05-27 14:30:15
+# Total URLs: 156
+
+https://example.com/api/users
+https://target.com/admin/panel
+https://secure.site.com/login
+...
+```
+
+---
+
+## 🔧 Advanced Configuration
+
+### iDork v2.0 Configuration
+
+#### Search Engine Selection
+- **DuckDuckGo** - Most reliable, fewer rate limits
+- **Google** - Comprehensive results (requires googlesearch-python)
+- **Bing** - Good alternative source
+- **Yahoo/Yandex** - Additional coverage
+
+#### Auto-Save Settings
+```python
+# Customizable settings in interactive mode
+auto_save_interval = 50      # Save every N results
+output_formats = ["txt", "json", "csv"]  # Multiple formats
+risk_separation = True       # Separate files by risk level
+```
+
+### IDork Scanner Configuration
+
+#### Payload Customization
+```python
+# Edit payloads in IDorkScanner class
+payloads = {
+    "sqli": ["' OR '1'='1", "' UNION SELECT NULL--", "' OR sleep(3)--"],
+    "xss": ["<script>alert(1)</script>", "<img src=x onerror=alert(1)>"],
+    "ssti": ["{{7*7}}", "{{config.items()}}", "${7*7}"]
 }
 ```
 
-### CSV Format (Spreadsheet-Friendly)
-```csv
-#,URL,Title,Engine,Query,Timestamp
-1,https://example.com/admin,Admin Panel,duckduckgo,site:example.com admin,2025-05-26T11:29:01
+#### Threading and Delays
+- **Threads**: 1-20 (default: 5)
+- **Delay**: 0.5-10 seconds (default: 1.5)
+- **Timeout**: 5-30 seconds (default: 8)
+
+### URL Extractor Configuration
+
+#### Custom Regex Patterns
+```python
+# Add custom URL patterns in URLExtractor class
+custom_patterns = [
+    re.compile(r'api_url:\s*(https?://[^\s]+)', re.IGNORECASE),
+    re.compile(r'endpoint=(https?://[^&\s]+)', re.IGNORECASE)
+]
 ```
+
+---
 
 ## 🎯 Use Cases
 
-### 🔒 **Security Research**
-- **Penetration testing** - Find attack vectors
-- **Bug bounty hunting** - Discover vulnerabilities
-- **Security audits** - Assess organizational exposure
+### 🔒 **Security Testing Workflow**
+1. **Discovery** - Use iDork v2.0 to find potentially vulnerable pages
+2. **Analysis** - Review HIGH risk URLs from categorized output
+3. **Testing** - Use IDork Scanner to test discovered URLs for vulnerabilities
+4. **Reporting** - Compile findings from all tools for comprehensive assessment
 
-### 🕵️ **OSINT (Open Source Intelligence)**
-- **Information gathering** - Collect public data
-- **Digital footprint analysis** - Map online presence
-- **Competitive intelligence** - Research competitors
+### 🕵️ **OSINT Investigation**
+1. **Initial Gathering** - Use iDork with target-specific dorks
+2. **URL Collection** - Extract additional URLs from discovered documents using URL Extractor
+3. **Deep Analysis** - Scan extracted URLs for sensitive information leaks
 
-### 📚 **Academic Research**
-- **Data collection** - Gather research materials
-- **Web crawling** - Index specific content
-- **Digital archaeology** - Find historical data
+### 📚 **Research and Documentation**
+1. **Data Collection** - Gather URLs related to specific topics
+2. **URL Processing** - Extract and clean URLs from research documents
+3. **Verification** - Test URL accessibility and categorize by risk level
 
-## ⚠️ Legal Disclaimer
+---
 
-**IMPORTANT: This tool is for educational and authorized testing purposes only.**
+## ⚡ Performance Tips
 
-- ✅ **Only test systems you own or have explicit permission to test**
-- ✅ **Comply with all applicable local, state, and federal laws**
-- ✅ **Use responsibly and ethically**
-- ❌ **Do not access systems without authorization**
-- ❌ **Do not use for malicious purposes**
+### For Large-Scale Operations
+- **Use proxy rotation** to avoid rate limiting
+- **Enable auto-save** to prevent data loss
+- **Process in batches** (1000-5000 dorks/URLs)
+- **Use threading** appropriately (5-10 threads max)
+- **Monitor memory usage** during large scans
 
-**The developer assumes no responsibility for misuse of this tool.**
+### Rate Limiting Mitigation
+- **Increase delays** between requests (8-15 seconds)
+- **Use multiple search engines** to distribute load
+- **Implement proxy rotation** for bulk operations
+- **Take breaks** between large scanning sessions
 
-## 📸 Screenshots
-
-### Main Interface
-![Main Interface](screenshots/main_interface.png)
-
-### Search Progress
-![Search Progress](screenshots/search_progress.png)
-
-### Results Display
-![Results Display](screenshots/results_display.png)
+---
 
 ## 🐛 Troubleshooting
 
-### Common Issues
+### Common Issues and Solutions
 
-#### "No results found"
-- **Check internet connection**
-- **Try different search engine**
-- **Reduce request delay**
-- **Verify dork syntax**
+#### Installation Problems
+```bash
+# If pip install fails
+python -m pip install --upgrade pip
+pip install --no-cache-dir rich requests duckduckgo-search
 
-#### "Rate limited" errors
-- **Increase request delay** (try 10-15 seconds)
-- **Use proxy rotation**
-- **Switch to different engine**
-- **Take breaks between large searches**
+# For encoding issues
+pip install chardet
 
-#### Auto-save not working
-- **Check file permissions** in output directory
-- **Ensure sufficient disk space**
-- **Try different output format**
+# For GUI issues (Linux)
+sudo apt-get install python3-tk
+```
 
-#### Search engine errors
-- **Install optional dependencies**: `pip install googlesearch-python`
-- **Check proxy configuration**
-- **Verify internet connectivity**
+#### Runtime Errors
+- **"No module named 'rich'"** → `pip install rich`
+- **"No results found"** → Check internet connection, try different engine
+- **"Rate limited"** → Increase delay, use proxy, switch engines
+- **"File encoding error"** → URL Extractor handles this automatically
 
-### Performance Tips
+#### Performance Issues
+- **Slow scanning** → Reduce thread count, increase delays
+- **Memory usage** → Process smaller batches, enable auto-save
+- **Network timeouts** → Increase timeout values, check connection
 
-- **Use DuckDuckGo** for best reliability
-- **Enable auto-save** for large searches
-- **Use proxy rotation** for bulk scanning
-- **Increase delay** if getting rate limited
-- **Process results in batches** (1000-5000 dorks)
+---
+
+## 📚 Documentation
+
+### Tool-Specific Guides
+- **[iDork Guide](docs/idork-guide.md)** - Comprehensive dorking strategies
+- **[Scanner Guide](docs/scanner-guide.md)** - Vulnerability testing methodology
+- **[Extractor Guide](docs/extractor-guide.md)** - URL extraction techniques
+
+### Reference Materials
+- **[Dork Database](docs/dorks.md)** - Collection of useful Google dorks
+- **[Vulnerability Patterns](docs/vulns.md)** - Common vulnerability indicators
+- **[API Reference](docs/api.md)** - For developers integrating tools
+
+---
+
+## ⚠️ Legal and Ethical Use
+
+**CRITICAL: This toolkit is for authorized testing and educational purposes only.**
+
+### ✅ **Authorized Use**
+- Testing systems you own or have explicit written permission to test
+- Educational research and learning
+- Bug bounty programs with proper scope
+- Security assessments with client authorization
+- Academic research with proper ethical approval
+
+### ❌ **Prohibited Use**
+- Accessing systems without authorization
+- Malicious activities or attacks
+- Violating terms of service
+- Harassment or illegal activities
+- Commercial use without proper licensing
+
+### 🛡️ **Best Practices**
+- Always obtain proper authorization before testing
+- Respect rate limits and terms of service
+- Document all testing activities
+- Report vulnerabilities responsibly
+- Follow applicable laws and regulations
+
+**The developers assume no responsibility for misuse of these tools.**
+
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how you can help:
+We welcome contributions to improve the iDork Suite!
 
 ### Ways to Contribute
-- 🐛 **Report bugs** via GitHub Issues
-- 💡 **Suggest features** or improvements
-- 📝 **Improve documentation**
-- 🔧 **Submit pull requests**
-- 🌟 **Star the repository**
+- 🐛 **Bug Reports** - Report issues via GitHub Issues
+- 💡 **Feature Requests** - Suggest new capabilities
+- 📝 **Documentation** - Improve guides and examples
+- 🔧 **Code Contributions** - Submit pull requests
+- 🌟 **Community** - Star the repository and share
 
 ### Development Setup
 ```bash
-# Fork and clone the repository
-git clone https://github.com/iMorgann/idork.git
-cd idork
+# Fork and clone
+git clone https://github.com/iMorgann/iDork-Suite.git
+cd iDork-Suite
 
-# Create development branch
+# Create feature branch
 git checkout -b feature/your-feature
 
 # Install development dependencies
 pip install -r requirements-dev.txt
 
-# Make your changes and test
-python idork.py
+# Test your changes
+python -m pytest tests/
 
 # Submit pull request
 ```
 
-### Code Guidelines
-- **Follow PEP 8** Python style guide
-- **Add comments** for complex logic
-- **Test your changes** thoroughly
-- **Update documentation** if needed
-
-## 📚 Documentation
-
-- **[Wiki](https://github.com/iMorgann/idork/wiki)** - Detailed guides and tutorials
-- **[API Reference](docs/api.md)** - For developers integrating iDork
-- **[Dork Database](docs/dorks.md)** - Collection of useful dorks
-- **[FAQ](docs/faq.md)** - Frequently asked questions
+---
 
 ## 🎖️ Credits
 
 **Developed by:** [root](https://github.com/iMorgann) ([@rootbck](https://t.me/rootbck))
 
+### Tool Evolution
+- **iDork v1.0** - Basic Google dorking functionality
+- **iDork v2.0** - Enhanced with risk analysis and multi-engine support
+- **IDork Scanner** - Dedicated vulnerability scanning capabilities
+- **URL Extractor** - Universal URL extraction from any source
+
 ### Special Thanks
 - **DuckDuckGo** for their excellent search API
 - **Rich library** for beautiful terminal interfaces
-- **Python community** for amazing libraries
-- **Security researchers** who inspired this tool
+- **Security research community** for inspiring these tools
+- **Beta testers** who provided valuable feedback
+
+---
 
 ## 📄 License
 
@@ -345,17 +490,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **🐛 Bug Reports**: [GitHub Issues](https://github.com/iMorgann/idork/issues)
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/iMorgann/iDork-Suite/issues)
 - **💬 Telegram**: [@rootbck](https://t.me/rootbck)
 - **📧 Email**: securedbox247@outlook.com
-- **📖 Documentation**: [Wiki](https://github.com/iMorgann/idork/wiki)
+- **📖 Documentation**: [Wiki](https://github.com/iMorgann/iDork-Suite/wiki)
 
 ---
 
 <div align="center">
 
-**⭐ If you find iDork useful, please consider starring the repository! ⭐**
+**⭐ If you find the iDork Suite useful, please consider starring the repository! ⭐**
 
-Made with ❤️ by [root](https://github.com/iMorgann)
+[![GitHub stars](https://img.shields.io/github/stars/iMorgann/iDork-Suite?style=social)](https://github.com/iMorgann/iDork-Suite/stargazers)
+
+Made with ❤️ by the security community
 
 </div>
