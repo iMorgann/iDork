@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-iDork v2.0 - User-Friendly Interactive Dorking Framework
+iDork v2.0 Enhanced - User-Friendly Interactive Dorking Framework with Risk Analysis
 Developed by: root (@rootbck)
+Enhanced with vulnerability analysis and risk-based auto-save
 No command line arguments needed - fully interactive!
 """
 
@@ -14,9 +15,9 @@ import random
 import threading
 import re
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse , parse_qs
 from datetime import datetime
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional, Union , Set
 
 # Check for tkinter (for file picker)
 try:
@@ -72,26 +73,28 @@ ASCII_LOGO = """
      ║    ██║██║  ██║██║   ██║██╔══██╗██╔═██╗ ║
      ║    ██║██████╔╝╚██████╔╝██║  ██║██║  ██╗║
      ║    ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝║
-     ║    🌟 USER-FRIENDLY INTERACTIVE MODE 🌟  ║
+     ║   🌟 ENHANCED WITH RISK ANALYSIS 🌟     ║
      ╚═══════════════════════════════════════╝
 
-     [bold red]ᵛ²ˑ⁰ - No Commands Needed! 🎯[/bold red]
+     [bold red]ᵛ²ˑ⁰ᴱ - No Commands Needed! 🎯[/bold red]
      [bold green]Developer: root | TG: @rootbck[/bold green]
 """
 
 WELCOME_MESSAGE = """
-[bold cyan]🎉 Welcome to iDork v2.0![/bold cyan]
+[bold cyan]🎉 Welcome to iDork v2.0 Enhanced![/bold cyan]
 
-This is the user-friendly version - no complex commands needed!
+This enhanced version includes vulnerability analysis and risk-based categorization!
 Just follow the simple prompts and let iDork guide you through everything.
 
-[bold yellow]✨ Features:[/bold yellow]
+[bold yellow]✨ Enhanced Features:[/bold yellow]
 • 🔍 Multiple search engines (Google, Bing, Yahoo, DuckDuckGo, Yandex)
 • 📁 Easy file picker for dork lists
 • 🔒 Optional proxy support
-• 💾 Multiple output formats
+• 💾 Multiple output formats with risk separation
 • ✅ URL verification
-• 📊 Beautiful statistics
+• 🚨 Vulnerability analysis with risk scoring
+• 📊 Risk-based auto-save (HIGH/MEDIUM/LOW)
+• 🎯 Automated dork suggestions
 
 [bold green]Let's get started! 🚀[/bold green]
 """
@@ -151,8 +154,6 @@ def save_file_picker(title="Save As", defaultextension=".txt", filetypes=None):
         return None
 
 
-# REPLACE the SimpleConfig class with this enhanced version:
-
 class SimpleConfig:
     """Enhanced configuration for better rate limiting"""
 
@@ -181,6 +182,7 @@ class SimpleConfig:
                 "yandex": 5.0
             }
         }
+
 class ProxyManager:
     """Simple proxy manager"""
 
@@ -211,7 +213,6 @@ class ProxyManager:
             self.failed_proxies.add(proxy_dict["http"])
 
 
-# REPLACE CHUNK 2 - Enhanced Search Engine with URL Counter and Working Engines
 
 class SimpleSearchEngine:
     """Enhanced search engine manager with real-time URL counter"""
@@ -622,6 +623,200 @@ class SimpleSearchEngine:
 
         return method(query, max_results)
 
+class URLAnalyzer:
+    """Analyze URLs to extract potentially interesting parameters"""
+
+    def __init__(self):
+        self.vulnerable_params = {
+            # SQL Injection prone
+            "id", "pid", "product_id", "user_id", "item_id", "cat_id", "category_id",
+            "page_id", "post_id", "article_id", "news_id", "blog_id", "comment_id",
+            "order_id", "invoice_id", "customer_id", "account_id", "profile_id",
+            "search", "filter", "sort", "order", "limit", "offset", "table", "database",
+            "db", "schema", "query", "sql", "where", "having", "group_by",
+            # File Inclusion prone
+            "file", "page", "include", "path", "template", "view", "load",
+            "doc", "document", "content", "data", "source", "resource",
+            "script", "style", "theme", "lang", "locale", "module", "component",
+            # Authentication/Authorization
+            "user", "username", "login", "pass", "password", "token", "auth",
+            "session", "key", "secret", "admin", "role", "level", "access",
+            "remember_me", "otp", "mfa", "2fa", "captcha", "csrf_token",
+            "api_key", "access_token", "refresh_token", "client_id", "client_secret",
+            # File operations
+            "upload", "download", "filename", "filepath", "dir", "directory",
+            "folder", "delete", "remove", "edit", "modify", "create",
+            "move", "copy", "rename", "archive", "extract", "compress", "decompress",
+            # Database operations
+            "query", "sql", "search", "filter", "sort", "order", "limit",
+            "offset", "table", "database", "db", "schema",
+            "join", "union", "intersect", "except", "truncate", "commit", "rollback",
+            # System commands
+            "cmd", "command", "exec", "execute", "run", "system", "shell",
+            "ping", "host", "ip", "url", "redirect", "goto",
+            "eval", "passthru", "shell_exec", "system_call", "proc_open", "popen",
+            # Other potentially vulnerable parameters
+            "callback_url", "redirect_uri", "origin", "referer",
+            # API-related parameters
+            "method", "action", "resource", "format",
+            # Additional parameters for modern web applications
+            "_token_anti_forgery"
+        }
+
+        self.interesting_extensions = {
+            "php", "asp", "aspx", "jsp", "do", "action", "cgi", "pl", "py",
+            "js", "html", "htm", "css", "rb", "erb", "go", "rs", "jar", "war", "ear",
+            "conf", "ini", "properties", "yaml", "json", "bak", "old",
+            ".c", ".cpp", ".h",
+            ".env"
+        }
+
+        self.sql_indicators = {
+            "union", "select", "insert", "delete", "update", "drop", "create",
+            "alter", "truncate", "exec", "execute", "sp_", "xp_",
+            "and", "or", "not", "like", "in", "between", "exists",
+            "from", "where", "group by", "having", "order by", "limit", "offset",
+            "sys.", "information_schema.", "master.dbo.", "sa.", "dbo."
+        }
+
+    def analyze_url(self, url: str) -> Dict:
+        """Analyze a single URL for interesting parameters"""
+        try:
+            parsed = urlparse(url)
+            analysis = {
+                'url': url,
+                'domain': parsed.netloc,
+                'path': parsed.path,
+                'parameters': [],
+                'risk_level': 'LOW',
+                'interesting_features': [],
+                'file_extension': None,
+                'potential_vulns': []
+            }
+
+            # Get file extension
+            path_parts = parsed.path.split('.')
+            if len(path_parts) > 1:
+                extension = path_parts[-1].lower()
+                if extension in self.interesting_extensions:
+                    analysis['file_extension'] = extension
+                    analysis['interesting_features'].append(f"Dynamic file: .{extension}")
+
+            # Analyze query parameters
+            if parsed.query:
+                params = parse_qs(parsed.query)
+                for param_name, values in params.items():
+                    param_info = {
+                        'name': param_name,
+                        'value': values[0] if values else '',
+                        'risk': 'LOW',
+                        'type': 'unknown'
+                    }
+
+                    # Check if parameter is potentially vulnerable
+                    if param_name.lower() in self.vulnerable_params:
+                        param_info['risk'] = 'HIGH'
+                        param_info['type'] = self._categorize_parameter(param_name)
+                        analysis['potential_vulns'].append(f"Vulnerable parameter: {param_name}")
+
+                    # Check for numeric values (potential SQL injection)
+                    if values and values[0].isdigit():
+                        param_info['type'] = 'numeric'
+                        if param_info['risk'] == 'LOW':
+                            param_info['risk'] = 'MEDIUM'
+
+                    # Check for SQL keywords in values
+                    if values and any(sql_word in values[0].lower() for sql_word in self.sql_indicators):
+                        param_info['risk'] = 'HIGH'
+                        param_info['type'] = 'sql_injection'
+                        analysis['potential_vulns'].append(f"SQL keywords in {param_name}")
+
+                    analysis['parameters'].append(param_info)
+
+            # Calculate overall risk level
+            analysis['risk_level'] = self._calculate_risk_level(analysis)
+
+            return analysis
+
+        except Exception as e:
+            return {
+                'url': url,
+                'error': str(e),
+                'risk_level': 'UNKNOWN'
+            }
+
+    def _categorize_parameter(self, param_name: str) -> str:
+        """Categorize parameter type based on name"""
+        param_lower = param_name.lower()
+
+        if any(x in param_lower for x in ['id', 'pid']):
+            return 'identifier'
+        elif any(x in param_lower for x in ['file', 'page', 'include']):
+            return 'file_inclusion'
+        elif any(x in param_lower for x in ['user', 'login', 'auth']):
+            return 'authentication'
+        elif any(x in param_lower for x in ['admin', 'role', 'level']):
+            return 'authorization'
+        elif any(x in param_lower for x in ['cmd', 'exec', 'system']):
+            return 'command_injection'
+        elif any(x in param_lower for x in ['query', 'search', 'sql']):
+            return 'database'
+        else:
+            return 'general'
+
+    def _calculate_risk_level(self, analysis: Dict) -> str:
+        """Calculate overall risk level for URL"""
+        high_risk_count = sum(1 for p in analysis['parameters'] if p['risk'] == 'HIGH')
+        medium_risk_count = sum(1 for p in analysis['parameters'] if p['risk'] == 'MEDIUM')
+
+        if high_risk_count > 0:
+            return 'HIGH'
+        elif medium_risk_count > 1:
+            return 'MEDIUM'
+        elif medium_risk_count > 0 or analysis['interesting_features']:
+            return 'MEDIUM'
+        else:
+            return 'LOW'
+
+    def analyze_batch(self, urls: List[str]) -> List[Dict]:
+        """Analyze multiple URLs"""
+        results = []
+        for url in urls:
+            analysis = self.analyze_url(url)
+            results.append(analysis)
+        return results
+
+    def generate_dork_suggestions(self, analysis_results: List[Dict]) -> List[str]:
+        """Generate dork suggestions based on analyzed URLs"""
+        dorks = set()
+
+        for result in analysis_results:
+            if 'parameters' not in result:
+                continue
+
+            domain = result.get('domain', '')
+
+            for param in result['parameters']:
+                param_name = param['name']
+                param_type = param.get('type', 'unknown')
+
+                # Generate dorks based on parameter type
+                if param_type == 'identifier':
+                    dorks.add(f'site:{domain} inurl:{param_name}=')
+                    dorks.add(f'inurl:"{param_name}=" site:{domain}')
+                elif param_type == 'file_inclusion':
+                    dorks.add(f'site:{domain} inurl:{param_name}= filetype:php')
+                    dorks.add(f'site:{domain} "{param_name}=" "include"')
+                elif param_type == 'authentication':
+                    dorks.add(f'site:{domain} inurl:{param_name}= login')
+                    dorks.add(f'site:{domain} "{param_name}=" "password"')
+                elif param_type == 'database':
+                    dorks.add(f'site:{domain} inurl:{param_name}= "mysql"')
+                    dorks.add(f'site:{domain} "{param_name}=" "database"')
+
+        return list(dorks)
+
+
 class DorkTemplates:
     """Pre-made dork templates for easy use"""
 
@@ -689,7 +884,7 @@ class DorkTemplates:
 
 
 class FileManager:
-    """FIXED file manager with working auto-save functionality"""
+    """Enhanced file manager with risk-based auto-save functionality"""
 
     def __init__(self, output_dir=None):
         self.output_dir = Path(output_dir) if output_dir else Path.cwd() / "iDork_Results"
@@ -699,105 +894,237 @@ class FileManager:
         self.auto_save_enabled = True
         self.auto_save_interval = 50
         self.auto_save_files = {}
+        self.risk_based_files = {}  # New: separate files for each risk level
         self.results_buffer = []
+        self.risk_buffers = {  # New: separate buffers for each risk level
+            'HIGH': [],
+            'MEDIUM': [],
+            'LOW': []
+        }
         self.total_saved = 0
-        self.save_counter = 0  # Track when to save
+        self.risk_counts = {'HIGH': 0, 'MEDIUM': 0, 'LOW': 0}  # New: track counts per risk
+        self.save_counter = 0
 
-    def setup_auto_save(self, base_filename, formats=["txt"]):
-        """Setup auto-save files"""
+    def setup_auto_save(self, base_filename, formats=["txt"], risk_based=True):
+        """Setup auto-save files including risk-based separation"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+        # Setup regular auto-save files
         for format_type in formats:
             filename = f"{base_filename}_autosave_{timestamp}.{format_type}"
             filepath = self.output_dir / filename
+            self._create_auto_save_file(filepath, format_type)
+            self.auto_save_files[format_type] = filepath
 
-            try:
-                if format_type == "txt":
-                    # Create header for TXT file
-                    with open(filepath, 'w', encoding='utf-8') as f:
-                        f.write("iDork v2.0 - Live Search Results\n")
-                        f.write("=" * 50 + "\n")
-                        f.write(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-                        f.write(f"Auto-save: Every {self.auto_save_interval} results\n")
-                        f.write("=" * 50 + "\n\n")
+        # Setup risk-based files if enabled
+        if risk_based:
+            self._setup_risk_based_files(base_filename, timestamp, formats)
 
-                elif format_type == "json":
-                    # Create initial JSON structure
-                    with open(filepath, 'w', encoding='utf-8') as f:
-                        json.dump({
-                            "metadata": {
-                                "tool": "iDork v2.0",
-                                "started": datetime.now().isoformat(),
-                                "auto_save": True,
-                                "total_results": 0
-                            },
-                            "results": []
-                        }, f, indent=2)
+    def _create_auto_save_file(self, filepath, format_type):
+        """Create initial auto-save file"""
+        try:
+            if format_type == "txt":
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    f.write("iDork v2.0 Enhanced - Live Search Results\n")
+                    f.write("=" * 50 + "\n")
+                    f.write(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write(f"Auto-save: Every {self.auto_save_interval} results\n")
+                    f.write("=" * 50 + "\n\n")
 
-                elif format_type == "csv":
-                    # Create CSV header
-                    with open(filepath, 'w', newline='', encoding='utf-8') as f:
-                        writer = csv.writer(f)
-                        writer.writerow(["#", "URL", "Title", "Engine", "Query", "Timestamp"])
+            elif format_type == "json":
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    json.dump({
+                        "metadata": {
+                            "tool": "iDork v2.0 Enhanced",
+                            "started": datetime.now().isoformat(),
+                            "auto_save": True,
+                            "total_results": 0
+                        },
+                        "results": []
+                    }, f, indent=2)
 
-                self.auto_save_files[format_type] = filepath
-                console.print(f"[green]🔄 Auto-save enabled: {filepath}[/green]")
+            elif format_type == "csv":
+                with open(filepath, 'w', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["#", "URL", "Title", "Engine", "Query", "Risk_Level", "Risk_Details", "Timestamp"])
 
-            except Exception as e:
-                console.print(f"[red]❌ Error setting up auto-save file ({format_type}): {e}[/red]")
+            console.print(f"[green]🔄 Auto-save enabled: {filepath}[/green]")
 
-    def auto_save_results(self, new_results, force=False):
-        """ENHANCED auto-save with debug info"""
-        console.print(
-            f"[dim]🔧 auto_save_results called: {len(new_results)} new results, force={force}, enabled={self.auto_save_enabled}[/dim]")
+        except Exception as e:
+            console.print(f"[red]❌ Error setting up auto-save file ({format_type}): {e}[/red]")
 
+    def _setup_risk_based_files(self, base_filename, timestamp, formats):
+        """Setup separate files for each risk level"""
+        risk_descriptions = {
+            'HIGH': 'Potentially Vulnerable - High Risk URLs',
+            'MEDIUM': 'Worth Investigating - Medium Risk URLs',
+            'LOW': 'Probably Safe - Low Risk URLs'
+        }
+
+        for risk_level in ['HIGH', 'MEDIUM', 'LOW']:
+            self.risk_based_files[risk_level] = {}
+
+            for format_type in formats:
+                filename = f"{base_filename}_{risk_level.lower()}_risk_{timestamp}.{format_type}"
+                filepath = self.output_dir / filename
+
+                try:
+                    if format_type == "txt":
+                        with open(filepath, 'w', encoding='utf-8') as f:
+                            f.write(f"iDork v2.0 Enhanced - {risk_descriptions[risk_level]}\n")
+                            f.write("=" * 60 + "\n")
+                            f.write(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                            f.write(f"Risk Level: {risk_level}\n")
+                            f.write(f"Auto-save: Every {self.auto_save_interval} results\n")
+                            f.write("=" * 60 + "\n\n")
+
+                    elif format_type == "json":
+                        with open(filepath, 'w', encoding='utf-8') as f:
+                            json.dump({
+                                "metadata": {
+                                    "tool": "iDork v2.0 Enhanced",
+                                    "risk_level": risk_level,
+                                    "description": risk_descriptions[risk_level],
+                                    "started": datetime.now().isoformat(),
+                                    "auto_save": True,
+                                    "total_results": 0
+                                },
+                                "results": []
+                            }, f, indent=2)
+
+                    elif format_type == "csv":
+                        with open(filepath, 'w', newline='', encoding='utf-8') as f:
+                            writer = csv.writer(f)
+                            writer.writerow(["#", "URL", "Title", "Engine", "Query", "Risk_Level", "Risk_Details",
+                                             "Vulnerability_Info", "Timestamp"])
+
+                    self.risk_based_files[risk_level][format_type] = filepath
+                    console.print(f"[green]🔄 Risk-based auto-save enabled ({risk_level}): {filepath}[/green]")
+
+                except Exception as e:
+                    console.print(f"[red]❌ Error setting up risk-based file ({risk_level}, {format_type}): {e}[/red]")
+
+    def auto_save_results_with_analysis(self, new_results, analyses=None, force=False):
+        """Enhanced auto-save with risk-based categorization"""
         if not self.auto_save_enabled:
-            console.print(f"[yellow]⚠️ Auto-save is disabled, skipping...[/yellow]")
             return
 
         if not new_results and not force:
-            console.print(f"[dim]📊 No new results and not forcing, skipping...[/dim]")
             return
 
-        # Add new results to buffer
-        if new_results:
-            self.results_buffer.extend(new_results)
-            self.save_counter += len(new_results)
-            console.print(
-                f"[cyan]📝 Added {len(new_results)} results to buffer. Buffer size: {len(self.results_buffer)}, Counter: {self.save_counter}[/cyan]")
+        # Merge analysis data with results
+        if analyses:
+            analyzed_results = self._merge_results_with_analysis(new_results, analyses)
+        else:
+            # If no analysis, mark all as LOW risk
+            analyzed_results = []
+            for result in new_results:
+                result['risk_level'] = 'LOW'
+                result['risk_details'] = 'Not analyzed'
+                analyzed_results.append(result)
+
+        # Categorize by risk level
+        if analyzed_results:
+            for result in analyzed_results:
+                risk_level = result.get('risk_level', 'LOW')
+                self.risk_buffers[risk_level].append(result)
+
+        # Add to main buffer
+        self.results_buffer.extend(analyzed_results)
+        self.save_counter += len(analyzed_results)
+
+        # Update risk counts
+        for risk_level in ['HIGH', 'MEDIUM', 'LOW']:
+            self.risk_counts[risk_level] += len(self.risk_buffers[risk_level])
 
         # Save when we reach the interval or force save
         if self.save_counter >= self.auto_save_interval or force:
-            console.print(
-                f"[yellow]💾 Triggering save: counter={self.save_counter}, interval={self.auto_save_interval}, force={force}[/yellow]")
-            self._flush_buffer()
-            self.save_counter = 0  # Reset counter
+            self._flush_all_buffers()
+            self.save_counter = 0
+
+    def _merge_results_with_analysis(self, results, analyses):
+        """Merge search results with vulnerability analysis"""
+        analyzed_results = []
+
+        # Create URL to analysis mapping
+        analysis_map = {}
+        for analysis in analyses:
+            url = analysis.get('url', '')
+            if url:
+                analysis_map[url] = analysis
+
+        # Merge results with analysis
+        for result in results:
+            url = result.get('url', '')
+            analysis = analysis_map.get(url, {})
+
+            # Add risk information to result
+            result['risk_level'] = analysis.get('risk_level', 'LOW')
+            result['risk_details'] = self._format_risk_details(analysis)
+            result['vulnerability_info'] = analysis.get('potential_vulns', [])
+            result['parameters'] = analysis.get('parameters', [])
+
+            analyzed_results.append(result)
+
+        return analyzed_results
+
+    def _format_risk_details(self, analysis):
+        """Format risk details for display"""
+        if not analysis:
+            return "Not analyzed"
+
+        risk_level = analysis.get('risk_level', 'LOW')
+        potential_vulns = analysis.get('potential_vulns', [])
+
+        if risk_level == 'HIGH':
+            if potential_vulns:
+                return f"Potentially vulnerable - {', '.join(potential_vulns[:2])}"
+            return "Potentially vulnerable"
+        elif risk_level == 'MEDIUM':
+            return "Worth investigating - Contains suspicious parameters"
         else:
-            console.print(f"[dim]📊 Not saving yet: {self.save_counter}/{self.auto_save_interval} results[/dim]")
+            return "Probably safe"
 
-    def _flush_buffer(self):
-        """FIXED: Flush buffer to files with better error handling"""
-        if not self.results_buffer:
-            console.print("[dim]📊 No results in buffer to flush[/dim]")
-            return
+    def _flush_all_buffers(self):
+        """Flush all buffers including risk-based ones"""
+        # Flush main buffer to regular files
+        if self.results_buffer:
+            for format_type, filepath in self.auto_save_files.items():
+                if filepath and filepath.exists():
+                    try:
+                        self._append_to_file(filepath, self.results_buffer, format_type)
+                    except Exception as e:
+                        console.print(f"[red]❌ Auto-save error ({format_type}): {e}[/red]")
 
-        console.print(f"[cyan]💾 Saving {len(self.results_buffer)} results to auto-save files...[/cyan]")
+        # Flush risk-based buffers
+        for risk_level, buffer in self.risk_buffers.items():
+            if buffer and risk_level in self.risk_based_files:
+                for format_type, filepath in self.risk_based_files[risk_level].items():
+                    if filepath and filepath.exists():
+                        try:
+                            self._append_to_risk_file(filepath, buffer, format_type, risk_level)
+                        except Exception as e:
+                            console.print(f"[red]❌ Risk-based auto-save error ({risk_level}, {format_type}): {e}[/red]")
 
-        for format_type, filepath in self.auto_save_files.items():
-            if filepath and filepath.exists():
-                try:
-                    self._append_to_file(filepath, self.results_buffer, format_type)
-                    console.print(f"[green]✅ Saved to {format_type.upper()} file[/green]")
-                except Exception as e:
-                    console.print(f"[red]❌ Auto-save error ({format_type}): {e}[/red]")
+        # Update counters and clear buffers
+        buffer_size = len(self.results_buffer)
+        self.total_saved += buffer_size
 
-        self.total_saved += len(self.results_buffer)
-        console.print(
-            f"[bold cyan]💾 Auto-saved {len(self.results_buffer)} results! Total saved: {self.total_saved}[/bold cyan]")
+        # Show save summary with risk breakdown
+        console.print(f"[bold cyan]💾 Auto-saved {buffer_size} results![/bold cyan]")
+        for risk_level in ['HIGH', 'MEDIUM', 'LOW']:
+            count = len(self.risk_buffers[risk_level])
+            if count > 0:
+                color = "red" if risk_level == 'HIGH' else "yellow" if risk_level == 'MEDIUM' else "green"
+                console.print(f"[{color}]  • {risk_level}: {count} URLs[/{color}]")
+
+        # Clear all buffers
         self.results_buffer.clear()
+        for risk_level in self.risk_buffers:
+            self.risk_buffers[risk_level].clear()
 
     def _append_to_file(self, filepath, results, format_type):
-        """FIXED: Append results to specific file format"""
+        """Append results to main file"""
         if format_type == "txt":
             with open(filepath, 'a', encoding='utf-8') as f:
                 for i, result in enumerate(results):
@@ -807,15 +1134,17 @@ class FileManager:
                     engine = result.get("engine", "unknown")
                     query = result.get("query", "N/A")
                     timestamp = result.get("timestamp", "N/A")
+                    risk_level = result.get("risk_level", "LOW")
+                    risk_details = result.get("risk_details", "No details")
 
                     f.write(f"{result_num}. [{engine.upper()}] {title}\n")
                     f.write(f"   URL: {url}\n")
                     f.write(f"   Query: {query}\n")
+                    f.write(f"   Risk: {risk_level} - {risk_details}\n")
                     f.write(f"   Time: {timestamp}\n")
                     f.write("-" * 50 + "\n")
 
         elif format_type == "json":
-            # Read existing JSON, append new results, write back
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
                     data = json.load(f)
@@ -840,30 +1169,125 @@ class FileManager:
                         result.get("title", ""),
                         result.get("engine", ""),
                         result.get("query", ""),
+                        result.get("risk_level", "LOW"),
+                        result.get("risk_details", ""),
                         result.get("timestamp", "")
                     ])
 
-    def finalize_auto_save(self):
-        """Finalize auto-save files"""
-        console.print("[blue]🔄 Finalizing auto-save files...[/blue]")
+    def _append_to_risk_file(self, filepath, results, format_type, risk_level):
+        """Append results to risk-specific file"""
+        if format_type == "txt":
+            with open(filepath, 'a', encoding='utf-8') as f:
+                for i, result in enumerate(results):
+                    result_num = self.risk_counts[risk_level] - len(results) + i + 1
+                    url = result.get("url", "N/A")
+                    title = result.get("title", "N/A")
+                    engine = result.get("engine", "unknown")
+                    query = result.get("query", "N/A")
+                    timestamp = result.get("timestamp", "N/A")
+                    risk_details = result.get("risk_details", "No details")
 
-        # Flush any remaining results
-        if self.results_buffer:
-            self._flush_buffer()
+                    f.write(f"{result_num}. [{engine.upper()}] {title}\n")
+                    f.write(f"   URL: {url}\n")
+                    f.write(f"   Query: {query}\n")
+                    f.write(f"   Risk: {risk_level} - {risk_details}\n")
+                    f.write(f"   Time: {timestamp}\n")
 
-        # Add footer to TXT file
-        txt_file = self.auto_save_files.get("txt")
-        if txt_file and txt_file.exists():
+                    # Add vulnerability details for HIGH risk
+                    if risk_level == 'HIGH' and result.get('vulnerability_info'):
+                        vuln_details = ', '.join(result['vulnerability_info'][:3])
+                        f.write(f"   Vulnerabilities: {vuln_details}\n")
+
+                    f.write("-" * 50 + "\n")
+
+        elif format_type == "json":
             try:
-                with open(txt_file, 'a', encoding='utf-8') as f:
-                    f.write("\n" + "=" * 50 + "\n")
-                    f.write(f"Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-                    f.write(f"Total Results: {self.total_saved}\n")
-                    f.write("=" * 50 + "\n")
-            except Exception as e:
-                console.print(f"[red]Error finalizing TXT file: {e}[/red]")
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
 
-        console.print(f"[bold green]✅ Auto-save finalized! Total results saved: {self.total_saved}[/bold green]")
+                data["results"].extend(results)
+                data["metadata"]["last_updated"] = datetime.now().isoformat()
+                data["metadata"]["total_results"] = len(data["results"])
+
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+            except Exception as e:
+                console.print(f"[red]Risk-based JSON save error: {e}[/red]")
+
+        elif format_type == "csv":
+            with open(filepath, 'a', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                for i, result in enumerate(results):
+                    result_num = self.risk_counts[risk_level] - len(results) + i + 1
+                    vuln_info = '; '.join(result.get('vulnerability_info', []))
+                    writer.writerow([
+                        result_num,
+                        result.get("url", ""),
+                        result.get("title", ""),
+                        result.get("engine", ""),
+                        result.get("query", ""),
+                        risk_level,
+                        result.get("risk_details", ""),
+                        vuln_info,
+                        result.get("timestamp", "")
+                    ])
+
+    def show_risk_summary(self):
+        """Show summary of risk-based results"""
+        total_high = self.risk_counts['HIGH']
+        total_medium = self.risk_counts['MEDIUM']
+        total_low = self.risk_counts['LOW']
+        total_all = total_high + total_medium + total_low
+
+        if total_all == 0:
+            return
+
+        console.print(f"\n[bold blue]🔍 Vulnerability Analysis Summary[/bold blue]")
+
+        summary_table = Table(title="Risk Distribution")
+        summary_table.add_column("Risk Level", style="bold")
+        summary_table.add_column("Count", justify="right")
+        summary_table.add_column("Percentage", justify="right")
+        summary_table.add_column("Description", style="dim")
+
+        # Calculate percentages
+        high_pct = (total_high / total_all * 100) if total_all > 0 else 0
+        medium_pct = (total_medium / total_all * 100) if total_all > 0 else 0
+        low_pct = (total_low / total_all * 100) if total_all > 0 else 0
+
+        summary_table.add_row(
+            "[red]HIGH[/red]",
+            f"[red]{total_high}[/red]",
+            f"[red]{high_pct:.1f}%[/red]",
+            "Potentially vulnerable"
+        )
+        summary_table.add_row(
+            "[yellow]MEDIUM[/yellow]",
+            f"[yellow]{total_medium}[/yellow]",
+            f"[yellow]{medium_pct:.1f}%[/yellow]",
+            "Worth investigating"
+        )
+        summary_table.add_row(
+            "[green]LOW[/green]",
+            f"[green]{total_low}[/green]",
+            f"[green]{low_pct:.1f}%[/green]",
+            "Probably safe"
+        )
+
+        console.print(summary_table)
+
+        # Show file locations
+        if self.risk_based_files:
+            console.print(f"\n[bold cyan]📁 Risk-based files created:[/bold cyan]")
+            for risk_level in ['HIGH', 'MEDIUM', 'LOW']:
+                if risk_level in self.risk_based_files:
+                    count = self.risk_counts[risk_level]
+                    if count > 0:
+                        color = "red" if risk_level == 'HIGH' else "yellow" if risk_level == 'MEDIUM' else "green"
+                        console.print(f"[{color}]{risk_level} Risk ({count} URLs):[/{color}]")
+                        for format_type, filepath in self.risk_based_files[risk_level].items():
+                            if filepath:
+                                console.print(f"[dim]  • {format_type.upper()}: {filepath}[/dim]")
 
     def load_dorks_from_file(self, filepath):
         """Load dorks from file with multiple encoding support"""
@@ -891,6 +1315,84 @@ class FileManager:
         console.print(f"[green]✅ Loaded {len(dorks)} dorks from file[/green]")
         return dorks
 
+    def finalize_auto_save(self):
+        """Finalize auto-save files with risk summary"""
+        console.print("[blue]🔄 Finalizing auto-save files...[/blue]")
+
+        # Flush any remaining results
+        if any(self.risk_buffers.values()) or self.results_buffer:
+            self._flush_all_buffers()
+
+        # Add footer to main TXT file
+        txt_file = self.auto_save_files.get("txt")
+        if txt_file and txt_file.exists():
+            try:
+                with open(txt_file, 'a', encoding='utf-8') as f:
+                    f.write("\n" + "=" * 50 + "\n")
+                    f.write(f"Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write(f"Total Results: {self.total_saved}\n")
+                    f.write(f"High Risk: {self.risk_counts['HIGH']}\n")
+                    f.write(f"Medium Risk: {self.risk_counts['MEDIUM']}\n")
+                    f.write(f"Low Risk: {self.risk_counts['LOW']}\n")
+                    f.write("=" * 50 + "\n")
+            except Exception as e:
+                console.print(f"[red]Error finalizing TXT file: {e}[/red]")
+
+        # Add footers to risk-based TXT files
+        for risk_level in ['HIGH', 'MEDIUM', 'LOW']:
+            if risk_level in self.risk_based_files:
+                txt_file = self.risk_based_files[risk_level].get("txt")
+                if txt_file and txt_file.exists():
+                    try:
+                        with open(txt_file, 'a', encoding='utf-8') as f:
+                            f.write("\n" + "=" * 60 + "\n")
+                            f.write(f"Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                            f.write(f"Total {risk_level} Risk Results: {self.risk_counts[risk_level]}\n")
+                            f.write("=" * 60 + "\n")
+                    except Exception as e:
+                        console.print(f"[red]Error finalizing {risk_level} risk file: {e}[/red]")
+
+    def finalize_auto_save(self):
+        """Finalize auto-save files with risk summary"""
+        console.print("[blue]🔄 Finalizing auto-save files...[/blue]")
+
+        # Flush any remaining results
+        if any(self.risk_buffers.values()) or self.results_buffer:
+            self._flush_all_buffers()
+
+        # Add footer to main TXT file
+        txt_file = self.auto_save_files.get("txt")
+        if txt_file and txt_file.exists():
+            try:
+                with open(txt_file, 'a', encoding='utf-8') as f:
+                    f.write("\n" + "=" * 50 + "\n")
+                    f.write(f"Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write(f"Total Results: {self.total_saved}\n")
+                    f.write(f"High Risk: {self.risk_counts['HIGH']}\n")
+                    f.write(f"Medium Risk: {self.risk_counts['MEDIUM']}\n")
+                    f.write(f"Low Risk: {self.risk_counts['LOW']}\n")
+                    f.write("=" * 50 + "\n")
+            except Exception as e:
+                console.print(f"[red]Error finalizing TXT file: {e}[/red]")
+
+        # Add footers to risk-based TXT files
+        for risk_level in ['HIGH', 'MEDIUM', 'LOW']:
+            if risk_level in self.risk_based_files:
+                txt_file = self.risk_based_files[risk_level].get("txt")
+                if txt_file and txt_file.exists():
+                    try:
+                        with open(txt_file, 'a', encoding='utf-8') as f:
+                            f.write("\n" + "=" * 60 + "\n")
+                            f.write(f"Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                            f.write(f"Total {risk_level} Risk Results: {self.risk_counts[risk_level]}\n")
+                            f.write("=" * 60 + "\n")
+                    except Exception as e:
+                        console.print(f"[red]Error finalizing {risk_level} risk file: {e}[/red]")
+
+        # Show final summary
+        self.show_risk_summary()
+        console.print(f"[bold green]✅ Auto-save finalized! Total results saved: {self.total_saved}[/bold green]")
+
     def save_results(self, results, filename=None, format_type="txt"):
         """Save final results to file (separate from auto-save)"""
         if not filename:
@@ -904,7 +1406,7 @@ class FileManager:
                 with open(filepath, 'w', encoding='utf-8') as f:
                     json.dump({
                         "metadata": {
-                            "tool": "iDork v2.0",
+                            "tool": "iDork v2.0 Enhanced",
                             "generated": datetime.now().isoformat(),
                             "total_results": len(results)
                         },
@@ -920,7 +1422,7 @@ class FileManager:
 
             else:  # txt format
                 with open(filepath, 'w', encoding='utf-8') as f:
-                    f.write("iDork v2.0 - Final Search Results\n")
+                    f.write("iDork v2.0 Enhanced - Final Search Results\n")
                     f.write("=" * 50 + "\n")
                     f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
                     f.write(f"Total Results: {len(results)}\n")
@@ -930,10 +1432,13 @@ class FileManager:
                         url = result.get("url", "N/A")
                         title = result.get("title", "N/A")
                         engine = result.get("engine", "unknown")
+                        risk_level = result.get("risk_level", "LOW")
+                        risk_details = result.get("risk_details", "No details")
 
                         f.write(f"{i}. [{engine.upper()}] {title}\n")
                         f.write(f"   URL: {url}\n")
                         f.write(f"   Query: {result.get('query', 'N/A')}\n")
+                        f.write(f"   Risk: {risk_level} - {risk_details}\n")
                         f.write("\n")
 
             console.print(f"[green]💾 Final results saved to: {filepath}[/green]")
@@ -943,158 +1448,6 @@ class FileManager:
             console.print(f"[red]❌ Error saving final file: {e}[/red]")
             return None
 
-def run_search(self, dorks, engine, max_results):
-    """Simplified search function - auto-save already configured"""
-    console.print(f"\n[bold green]🚀 Starting Search[/bold green]")
-    console.print(f"[cyan]Engine: {engine.title()}[/cyan]")
-    console.print(f"[cyan]Dorks: {len(dorks)}[/cyan]")
-    console.print(f"[cyan]Max results per dork: {max_results}[/cyan]")
-
-    # Show auto-save status
-    if self.file_manager.auto_save_enabled:
-        console.print(f"[green]💾 Auto-save: Every {self.file_manager.auto_save_interval} results[/green]")
-    else:
-        console.print("[yellow]⚠️ Auto-save disabled[/yellow]")
-
-    # Reset counters
-    self.search_engine.total_urls_found = 0
-
-    # Show warning for large searches
-    if len(dorks) > 100:
-        console.print(f"\n[yellow]⚠️ WARNING: {len(dorks)} dorks will take a long time![/yellow]")
-        engine_delay = self.config.get("engine_delays", {}).get(engine, 8.0)
-        estimated_time = len(dorks) * engine_delay / 60
-        console.print(f"[yellow]Estimated time: {estimated_time:.1f} minutes[/yellow]")
-
-        if self.file_manager.auto_save_enabled:
-            console.print(f"[green]✅ Auto-save is enabled - progress will be preserved![/green]")
-
-        if not Confirm.ask("Continue?", default=True):
-            console.print("[yellow]Search cancelled by user[/yellow]")
-            return []
-
-    self.stats["start_time"] = datetime.now()
-    self.stats["total_queries"] = len(dorks)
-    all_results = []
-
-    try:
-        with Progress(
-                SpinnerColumn(),
-                TextColumn("[progress.description]{task.description}"),
-                BarColumn(),
-                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-                TextColumn("({task.completed}/{task.total})"),
-                TextColumn("[bold green]URLs: {task.fields[urls_found]}[/bold green]"),
-                TextColumn(
-                    "[bold blue]Saved: {task.fields[saved_count]}[/bold blue]") if self.file_manager.auto_save_enabled else TextColumn(
-                    ""),
-                TimeElapsedColumn(),
-                console=console
-        ) as progress:
-
-            task_fields = {"urls_found": 0}
-            if self.file_manager.auto_save_enabled:
-                task_fields["saved_count"] = 0
-
-            search_task = progress.add_task(
-                "Searching...",
-                total=len(dorks),
-                **task_fields
-            )
-
-            for i, dork in enumerate(dorks, 1):
-                try:
-                    # Update progress description
-                    dork_preview = dork[:40] + "..." if len(dork) > 40 else dork
-                    progress.update(search_task, description=f"Searching: {dork_preview}")
-
-                    # Search with current engine
-                    results = self.search_engine.search(dork, engine, max_results)
-
-                    # Add metadata
-                    for result in results:
-                        result.update({
-                            "query": dork,
-                            "timestamp": datetime.now().isoformat(),
-                            "query_number": i,
-                            "dork_index": i
-                        })
-
-                    all_results.extend(results)
-                    self.stats["successful_queries"] += 1
-
-                    if results:
-                        console.print(f"[cyan]📝 Adding {len(results)} results to auto-save buffer...[/cyan]")
-                        self.file_manager.auto_save_results(results)
-
-                    # # Auto-save new results
-                    # if results and self.file_manager.auto_save_enabled:
-                    #     self.file_manager.auto_save_results(results)
-
-                    # Update progress
-                    update_data = {
-                        "urls_found": self.search_engine.total_urls_found,
-                        "description": f"Found {len(results)} URLs for dork {i}"
-                    }
-                    if self.file_manager.auto_save_enabled:
-                        update_data["saved_count"] = self.file_manager.total_saved
-
-                    progress.update(search_task, **update_data)
-
-                    # Show periodic summary
-                    if i % 25 == 0:
-                        if self.file_manager.auto_save_enabled:
-                            console.print(
-                                f"[bold blue]📊 Progress: {i}/{len(dorks)} dorks | {self.search_engine.total_urls_found} URLs | {self.file_manager.total_saved} saved[/bold blue]")
-                        else:
-                            console.print(
-                                f"[bold blue]📊 Progress: {i}/{len(dorks)} dorks | {self.search_engine.total_urls_found} URLs found[/bold blue]")
-
-                except KeyboardInterrupt:
-                    console.print(f"\n[yellow]⚠️ Search interrupted by user at dork {i}[/yellow]")
-                    break
-                except Exception as e:
-                    console.print(f"\n[red]❌ Error with dork {i}: {e}[/red]")
-                    continue
-
-                progress.advance(search_task)
-
-            # Final flush of auto-save buffer
-            if self.file_manager.auto_save_enabled:
-                self.file_manager.auto_save_results([], force=True)
-                self.file_manager.finalize_auto_save()
-
-    except Exception as e:
-        console.print(f"[red]💥 Critical error during search: {e}[/red]")
-        if self.file_manager.auto_save_enabled:
-            self.file_manager.finalize_auto_save()
-
-    self.stats["end_time"] = datetime.now()
-    self.stats["total_results"] = len(all_results)
-
-    # Remove duplicates
-    console.print(f"\n[blue]🔄 Processing {len(all_results)} results...[/blue]")
-    unique_results = []
-    seen_urls = set()
-
-    for result in all_results:
-        url = result.get("url", "")
-        if url not in seen_urls:
-            unique_results.append(result)
-            seen_urls.add(url)
-
-    duplicates_removed = len(all_results) - len(unique_results)
-    if duplicates_removed > 0:
-        console.print(f"[yellow]🔄 Removed {duplicates_removed} duplicate URLs[/yellow]")
-
-    # Final summary
-    console.print(f"\n[bold green]🎉 Search Complete![/bold green]")
-    console.print(f"[green]• Unique URLs Found: {len(unique_results)}[/green]")
-    if self.file_manager.auto_save_enabled:
-        console.print(f"[green]• Total URLs Auto-Saved: {self.file_manager.total_saved}[/green]")
-    console.print(f"[green]• Dorks Processed: {self.stats['successful_queries']}/{len(dorks)}[/green]")
-
-    return unique_results
 class URLVerifier:
     """Simple URL verification"""
 
@@ -1146,7 +1499,7 @@ class URLVerifier:
 
 
 class SimpleiDork:
-    """Main simplified iDork application"""
+    """Main simplified iDork application with enhanced features"""
 
     def __init__(self):
         self.config = SimpleConfig().config
@@ -1155,6 +1508,7 @@ class SimpleiDork:
         self.dork_templates = DorkTemplates()
         self.file_manager = FileManager()
         self.url_verifier = URLVerifier()
+        self.url_analyzer = URLAnalyzer()  # New: URL analyzer
         self.results = []
         self.stats = {
             "start_time": None,
@@ -1165,7 +1519,7 @@ class SimpleiDork:
         }
 
     def show_welcome(self):
-        """Display welcome screen"""
+        """Display enhanced welcome screen"""
         console.clear()
         console.print(Panel(ASCII_LOGO, border_style="cyan"))
         console.print(Panel(WELCOME_MESSAGE, border_style="green"))
@@ -1409,8 +1763,8 @@ class SimpleiDork:
         return all_dorks
 
     def configure_search(self):
-        """Enhanced search configuration with auto-save options"""
-        console.print("\n[bold blue]⚙️ Search Configuration[/bold blue]")
+        """Enhanced search configuration with risk-based auto-save options"""
+        console.print("\n[bold blue]⚙️ Enhanced Search Configuration[/bold blue]")
 
         # Max results per query
         max_results = IntPrompt.ask(
@@ -1434,35 +1788,42 @@ class SimpleiDork:
         except ValueError:
             console.print("[yellow]⚠️ Invalid delay, using default 8.0 seconds[/yellow]")
 
-        # AUTO-SAVE CONFIGURATION
-        console.print("\n[bold cyan]💾 Auto-Save Configuration[/bold cyan]")
-        console.print("[yellow]Auto-save protects your results if the search is interrupted![/yellow]")
+        # ENHANCED AUTO-SAVE CONFIGURATION
+        console.print("\n[bold cyan]💾 Enhanced Auto-Save Configuration[/bold cyan]")
+        console.print("[yellow]Auto-save now includes vulnerability analysis and risk-based categorization![/yellow]")
 
-        enable_autosave = Confirm.ask("Enable auto-save?", default=True)
+        enable_autosave = Confirm.ask("Enable enhanced auto-save with risk analysis?", default=True)
 
         auto_save_settings = {
             "enabled": enable_autosave,
             "formats": [],
             "filename": None,
-            "interval": 50
+            "interval": 50,
+            "risk_based": True  # New: enable risk-based separation
         }
 
         if enable_autosave:
             # Choose formats
             console.print("\n[cyan]📁 Choose auto-save formats:[/cyan]")
 
-            if Confirm.ask("Save as TXT (human-readable)?", default=True):
+            if Confirm.ask("Save as TXT (human-readable with risk levels)?", default=True):
                 auto_save_settings["formats"].append("txt")
 
-            if Confirm.ask("Save as JSON (structured data)?", default=False):
+            if Confirm.ask("Save as JSON (structured data with analysis)?", default=False):
                 auto_save_settings["formats"].append("json")
 
-            if Confirm.ask("Save as CSV (spreadsheet-friendly)?", default=False):
+            if Confirm.ask("Save as CSV (spreadsheet-friendly with risk columns)?", default=False):
                 auto_save_settings["formats"].append("csv")
 
             if not auto_save_settings["formats"]:
                 console.print("[yellow]⚠️ No formats selected, defaulting to TXT[/yellow]")
                 auto_save_settings["formats"] = ["txt"]
+
+            # Risk-based separation option
+            auto_save_settings["risk_based"] = Confirm.ask(
+                "Create separate files for each risk level (HIGH/MEDIUM/LOW)?",
+                default=True
+            )
 
             # Choose filename
             auto_save_settings["filename"] = Prompt.ask(
@@ -1479,10 +1840,18 @@ class SimpleiDork:
 
             # Show summary
             formats_str = ", ".join(auto_save_settings["formats"]).upper()
-            console.print(f"\n[green]✅ Auto-save enabled:[/green]")
+            console.print(f"\n[green]✅ Enhanced auto-save enabled:[/green]")
             console.print(f"[green]• Formats: {formats_str}[/green]")
-            console.print(f"[green]• Filename: {auto_save_settings['filename']}_autosave_[timestamp][/green]")
+            console.print(
+                f"[green]• Risk-based separation: {'Yes' if auto_save_settings['risk_based'] else 'No'}[/green]")
+            console.print(f"[green]• Filename: {auto_save_settings['filename']}_[risk_level]_[timestamp][/green]")
             console.print(f"[green]• Interval: Every {auto_save_settings['interval']} results[/green]")
+
+            if auto_save_settings["risk_based"]:
+                console.print("[cyan]📊 Separate files will be created for:[/cyan]")
+                console.print("[red]  • HIGH risk URLs (potentially vulnerable)[/red]")
+                console.print("[yellow]  • MEDIUM risk URLs (worth investigating)[/yellow]")
+                console.print("[green]  • LOW risk URLs (probably safe)[/green]")
 
         else:
             console.print("[yellow]⚠️ Auto-save disabled - results only saved at the end[/yellow]")
@@ -1490,18 +1859,17 @@ class SimpleiDork:
 
         return max_results, verify_urls, auto_save_settings
 
-    # REPLACE the run_search method in SimpleiDork class:
-
-    def run_search(self, dorks, engine, max_results):
-        """FIXED search function with working auto-save"""
-        console.print(f"\n[bold green]🚀 Starting Search[/bold green]")
+    def run_search_with_analysis(self, dorks, engine, max_results):
+        """Enhanced search function with integrated vulnerability analysis"""
+        console.print(f"\n[bold green]🚀 Starting Enhanced Search with Analysis[/bold green]")
         console.print(f"[cyan]Engine: {engine.title()}[/cyan]")
         console.print(f"[cyan]Dorks: {len(dorks)}[/cyan]")
         console.print(f"[cyan]Max results per dork: {max_results}[/cyan]")
 
         # Show auto-save status
         if self.file_manager.auto_save_enabled:
-            console.print(f"[green]💾 Auto-save: Every {self.file_manager.auto_save_interval} results[/green]")
+            console.print(
+                f"[green]💾 Auto-save: Every {self.file_manager.auto_save_interval} results with risk analysis[/green]")
         else:
             console.print("[yellow]⚠️ Auto-save disabled[/yellow]")
 
@@ -1534,21 +1902,20 @@ class SimpleiDork:
                     TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
                     TextColumn("({task.completed}/{task.total})"),
                     TextColumn("[bold green]URLs: {task.fields[urls_found]}[/bold green]"),
-                    TextColumn(
-                        "[bold blue]Saved: {task.fields[saved_count]}[/bold blue]") if self.file_manager.auto_save_enabled else TextColumn(
-                        ""),
+                    TextColumn("[bold red]HIGH: {task.fields[high_risk]}[/bold red]"),
+                    TextColumn("[bold yellow]MED: {task.fields[medium_risk]}[/bold yellow]"),
+                    TextColumn("[bold green]LOW: {task.fields[low_risk]}[/bold green]"),
                     TimeElapsedColumn(),
                     console=console
             ) as progress:
 
-                task_fields = {"urls_found": 0}
-                if self.file_manager.auto_save_enabled:
-                    task_fields["saved_count"] = 0
-
                 search_task = progress.add_task(
                     "Searching...",
                     total=len(dorks),
-                    **task_fields
+                    urls_found=0,
+                    high_risk=0,
+                    medium_risk=0,
+                    low_risk=0
                 )
 
                 for i, dork in enumerate(dorks, 1):
@@ -1560,51 +1927,56 @@ class SimpleiDork:
                         # Search with current engine
                         results = self.search_engine.search(dork, engine, max_results)
 
-                        # Add metadata to each result
-                        for result in results:
-                            result.update({
-                                "query": dork,
-                                "timestamp": datetime.now().isoformat(),
-                                "query_number": i,
-                                "dork_index": i
-                            })
+                        if results:
+                            # Analyze URLs for vulnerabilities
+                            urls = [r.get('url', '') for r in results if r.get('url')]
+                            analyses = self.url_analyzer.analyze_batch(urls)
 
-                        # Add to main results list
-                        all_results.extend(results)
-                        self.stats["successful_queries"] += 1
+                            # Add metadata to each result
+                            for result in results:
+                                result.update({
+                                    "query": dork,
+                                    "timestamp": datetime.now().isoformat(),
+                                    "query_number": i,
+                                    "dork_index": i
+                                })
 
-                        # *** THIS IS THE KEY FIX ***
-                        # Auto-save results immediately if we found any
-                        if results and self.file_manager.auto_save_enabled:
-                            console.print(f"[cyan]📝 Auto-saving {len(results)} new results...[/cyan]")
-                            self.file_manager.auto_save_results(results)
-                            console.print(
-                                f"[green]✅ Auto-save completed! Buffer now has {len(self.file_manager.results_buffer)} results[/green]")
+                            # Add to main results list
+                            all_results.extend(results)
+                            self.stats["successful_queries"] += 1
 
-                        # Update progress with current counts
-                        update_data = {
-                            "urls_found": self.search_engine.total_urls_found,
-                            "description": f"Found {len(results)} URLs for dork {i}"
-                        }
-                        if self.file_manager.auto_save_enabled:
-                            update_data["saved_count"] = self.file_manager.total_saved
-
-                        progress.update(search_task, **update_data)
-
-                        # Show periodic summary with save status
-                        if i % 25 == 0:
+                            # Auto-save with analysis
                             if self.file_manager.auto_save_enabled:
-                                console.print(
-                                    f"[bold blue]📊 Progress: {i}/{len(dorks)} dorks | {self.search_engine.total_urls_found} URLs | {self.file_manager.total_saved} saved to file[/bold blue]")
-                            else:
-                                console.print(
-                                    f"[bold blue]📊 Progress: {i}/{len(dorks)} dorks | {self.search_engine.total_urls_found} URLs found[/bold blue]")
+                                self.file_manager.auto_save_results_with_analysis(results, analyses)
+
+                            # Update progress counters
+                            high_count = sum(1 for a in analyses if a.get('risk_level') == 'HIGH')
+                            medium_count = sum(1 for a in analyses if a.get('risk_level') == 'MEDIUM')
+                            low_count = len(analyses) - high_count - medium_count
+
+                            progress.update(search_task,
+                                            urls_found=self.search_engine.total_urls_found,
+                                            high_risk=self.file_manager.risk_counts['HIGH'],
+                                            medium_risk=self.file_manager.risk_counts['MEDIUM'],
+                                            low_risk=self.file_manager.risk_counts['LOW'],
+                                            description=f"Found {len(results)} URLs (H:{high_count}, M:{medium_count}, L:{low_count})"
+                                            )
+
+                        # Show periodic summary
+                        if i % 25 == 0:
+                            console.print(
+                                f"[bold blue]📊 Progress: {i}/{len(dorks)} dorks | "
+                                f"URLs: {self.search_engine.total_urls_found} | "
+                                f"HIGH: {self.file_manager.risk_counts['HIGH']} | "
+                                f"MED: {self.file_manager.risk_counts['MEDIUM']} | "
+                                f"LOW: {self.file_manager.risk_counts['LOW']}[/bold blue]"
+                            )
 
                     except KeyboardInterrupt:
                         console.print(f"\n[yellow]⚠️ Search interrupted by user at dork {i}[/yellow]")
                         console.print(f"[cyan]💾 Forcing final auto-save...[/cyan]")
                         if self.file_manager.auto_save_enabled:
-                            self.file_manager.auto_save_results([], force=True)
+                            self.file_manager.auto_save_results_with_analysis([], force=True)
                             self.file_manager.finalize_auto_save()
                         break
                     except Exception as e:
@@ -1616,7 +1988,7 @@ class SimpleiDork:
                 # Final flush of auto-save buffer
                 if self.file_manager.auto_save_enabled:
                     console.print(f"[cyan]💾 Final auto-save flush...[/cyan]")
-                    self.file_manager.auto_save_results([], force=True)
+                    self.file_manager.auto_save_results_with_analysis([], force=True)
                     self.file_manager.finalize_auto_save()
 
         except Exception as e:
@@ -1644,25 +2016,10 @@ class SimpleiDork:
         if duplicates_removed > 0:
             console.print(f"[yellow]🔄 Removed {duplicates_removed} duplicate URLs[/yellow]")
 
-        # Final summary
-        console.print(f"\n[bold green]🎉 Search Complete![/bold green]")
-        console.print(f"[green]• Unique URLs Found: {len(unique_results)}[/green]")
-        if self.file_manager.auto_save_enabled:
-            console.print(f"[green]• Total URLs Auto-Saved: {self.file_manager.total_saved}[/green]")
-
-            # Show auto-save file locations
-            console.print(f"\n[bold cyan]📁 Auto-save files created:[/bold cyan]")
-            for format_type, filepath in self.file_manager.auto_save_files.items():
-                if filepath:
-                    console.print(f"[cyan]• {format_type.upper()}: {filepath}[/cyan]")
-
-        console.print(f"[green]• Dorks Processed: {self.stats['successful_queries']}/{len(dorks)}[/green]")
-
         return unique_results
 
-
     def show_results_preview(self, results):
-        """Show a preview of results"""
+        """Show enhanced preview of results with risk analysis"""
         if not results:
             console.print("[yellow]⚠️ No results found[/yellow]")
             return
@@ -1672,7 +2029,12 @@ class SimpleiDork:
         # Show statistics
         duration = (self.stats["end_time"] - self.stats["start_time"]).total_seconds()
 
-        stats_table = Table(title="Search Statistics")
+        # Calculate risk distribution
+        high_risk = sum(1 for r in results if r.get('risk_level') == 'HIGH')
+        medium_risk = sum(1 for r in results if r.get('risk_level') == 'MEDIUM')
+        low_risk = len(results) - high_risk - medium_risk
+
+        stats_table = Table(title="Enhanced Search Statistics")
         stats_table.add_column("Metric", style="cyan")
         stats_table.add_column("Value", style="green")
 
@@ -1686,183 +2048,258 @@ class SimpleiDork:
             avg_results = len(results) / self.stats["total_queries"]
             stats_table.add_row("Avg Results/Query", f"{avg_results:.1f}")
 
+        # Add risk statistics
+        stats_table.add_row("", "")
+        stats_table.add_row("[red]High Risk URLs[/red]", f"[red]{high_risk}[/red]")
+        stats_table.add_row("[yellow]Medium Risk URLs[/yellow]", f"[yellow]{medium_risk}[/yellow]")
+        stats_table.add_row("[green]Low Risk URLs[/green]", f"[green]{low_risk}[/green]")
+
         console.print(stats_table)
 
-        # Show sample results
-        console.print(f"\n[bold cyan]📋 Sample Results (showing first 10):[/bold cyan]")
+        # Show risk distribution chart
+        if high_risk > 0 or medium_risk > 0:
+            console.print(f"\n[bold red]🚨 Security Analysis Summary:[/bold red]")
+            total = len(results)
+            high_pct = (high_risk / total * 100) if total > 0 else 0
+            medium_pct = (medium_risk / total * 100) if total > 0 else 0
+            low_pct = (low_risk / total * 100) if total > 0 else 0
+
+            console.print(f"[red]High Risk: {high_risk} ({high_pct:.1f}%) - Potentially vulnerable![/red]")
+            console.print(f"[yellow]Medium Risk: {medium_risk} ({medium_pct:.1f}%) - Worth investigating[/yellow]")
+            console.print(f"[green]Low Risk: {low_risk} ({low_pct:.1f}%) - Probably safe[/green]")
+
+        # Show sample results with risk levels
+        console.print(f"\n[bold cyan]📋 Sample Results (showing first 10 with risk levels):[/bold cyan]")
 
         sample_table = Table()
         sample_table.add_column("No.", style="dim", width=4)
-        sample_table.add_column("Title", style="cyan", max_width=50)
-        sample_table.add_column("URL", style="blue", max_width=60)
-        sample_table.add_column("Engine", style="green", width=10)
+        sample_table.add_column("Risk", style="bold", width=6)
+        sample_table.add_column("Title", style="cyan", max_width=40)
+        sample_table.add_column("URL", style="blue", max_width=50)
+        sample_table.add_column("Engine", style="green", width=8)
 
         for i, result in enumerate(results[:10], 1):
-            title = result.get("title", "N/A")[:47] + "..." if len(result.get("title", "")) > 50 else result.get(
+            title = result.get("title", "N/A")[:37] + "..." if len(result.get("title", "")) > 40 else result.get(
                 "title", "N/A")
-            url = result.get("url", "N/A")[:57] + "..." if len(result.get("url", "")) > 60 else result.get("url", "N/A")
+            url = result.get("url", "N/A")[:47] + "..." if len(result.get("url", "")) > 50 else result.get("url", "N/A")
             engine = result.get("engine", "unknown").upper()
+            risk_level = result.get("risk_level", "LOW")
 
-            sample_table.add_row(str(i), title, url, engine)
+            # Color code risk level
+            if risk_level == "HIGH":
+                risk_display = "[red]HIGH[/red]"
+            elif risk_level == "MEDIUM":
+                risk_display = "[yellow]MED[/yellow]"
+            else:
+                risk_display = "[green]LOW[/green]"
+
+            sample_table.add_row(str(i), risk_display, title, url, engine)
 
         console.print(sample_table)
 
         if len(results) > 10:
             console.print(f"[dim]... and {len(results) - 10} more results[/dim]")
 
-    def save_results_interactive(self, results):
-        """Interactive save results"""
+        # Show high-risk examples if any
+        if high_risk > 0:
+            console.print(f"\n[bold red]⚠️ High Risk URL Examples:[/bold red]")
+            high_risk_results = [r for r in results if r.get('risk_level') == 'HIGH']
+
+            for i, result in enumerate(high_risk_results[:3], 1):
+                url = result.get('url', '')[:60] + "..." if len(result.get('url', '')) > 60 else result.get('url', '')
+                risk_details = result.get('risk_details', 'No details')
+                vuln_info = result.get('vulnerability_info', [])
+
+                console.print(f"[red]{i}. {url}[/red]")
+                console.print(f"[dim]   Risk: {risk_details}[/dim]")
+                if vuln_info:
+                    console.print(f"[dim]   Issues: {', '.join(vuln_info[:2])}[/dim]")
+
+    def analyze_and_save_results(self, results):
+        """Enhanced analysis and save with risk-based categorization"""
         if not results:
             return
 
-        console.print("\n[bold blue]💾 Save Results[/bold blue]")
+        console.print("\n[bold blue]🔍 Enhanced URL Analysis with Risk Categorization[/bold blue]")
 
-        save_results = Confirm.ask("Do you want to save the results?", default=True)
-        if not save_results:
-            return
-
-        # Choose format
-        format_choice = Prompt.ask(
-            "Choose output format",
-            choices=["txt", "json", "csv"],
+        # Ask user for analysis format preferences
+        analysis_format = Prompt.ask(
+            "Choose analyzed output format",
+            choices=["txt", "json", "csv", "all"],
             default="txt"
         )
 
-        # Choose filename
-        if TKINTER_AVAILABLE and Confirm.ask("Use file picker for save location?", default=True):
-            console.print("[cyan]📁 Opening save dialog...[/cyan]")
+        # Show enhanced analysis summary (already done in search)
+        high_risk = sum(1 for r in results if r.get('risk_level') == 'HIGH')
+        medium_risk = sum(1 for r in results if r.get('risk_level') == 'MEDIUM')
+        low_risk = len(results) - high_risk - medium_risk
 
-            filetypes = [
-                ("Text files", "*.txt"),
-                ("JSON files", "*.json"),
-                ("CSV files", "*.csv"),
-                ("All files", "*.*")
-            ]
+        console.print(f"\n[bold red]🚨 Enhanced Analysis Summary:[/bold red]")
+        console.print(f"[red]High Risk URLs: {high_risk} ← Potentially vulnerable![/red]")
+        console.print(f"[yellow]Medium Risk URLs: {medium_risk} ← Worth investigating[/yellow]")
+        console.print(f"[green]Low Risk URLs: {low_risk} ← Probably safe[/green]")
 
-            filename = save_file_picker(
-                "Save Results As",
-                f".{format_choice}",
-                filetypes
-            )
+        # Generate dork suggestions based on analysis
+        if high_risk > 0 or medium_risk > 0:
+            console.print(f"\n[cyan]🎯 Generating targeted dork suggestions...[/cyan]")
 
-            if filename:
-                # Extract directory and filename
-                filepath = Path(filename)
-                self.file_manager.output_dir = filepath.parent
-                filename_only = filepath.stem
+            # Collect all analysis data from results
+            analyses = []
+            for result in results:
+                if result.get('parameters'):
+                    analyses.append({
+                        'url': result.get('url', ''),
+                        'domain': urlparse(result.get('url', '')).netloc,
+                        'parameters': result.get('parameters', []),
+                        'risk_level': result.get('risk_level', 'LOW')
+                    })
 
-                saved_path = self.file_manager.save_results(results, filename_only, format_choice)
-                if saved_path:
-                    console.print(f"[green]✅ Results saved successfully![/green]")
+            dork_suggestions = self.url_analyzer.generate_dork_suggestions(analyses)
+
+            if dork_suggestions:
+                console.print(f"[cyan]🎯 Generated {len(dork_suggestions)} new dork suggestions![/cyan]")
+
+                # Save dork suggestions
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                dork_file = self.file_manager.output_dir / f"suggested_dorks_{timestamp}.txt"
+
+                with open(dork_file, 'w', encoding='utf-8') as f:
+                    f.write("# Generated Dork Suggestions from URL Analysis\n")
+                    f.write("# Use these dorks to find similar vulnerable pages\n")
+                    f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write(f"# Based on {len(results)} analyzed URLs\n\n")
+                    for dork in sorted(dork_suggestions):
+                        f.write(f"{dork}\n")
+
+                console.print(f"[cyan]💾 Dork suggestions saved to: {dork_file}[/cyan]")
+
+        # Save risk-categorized results if not already auto-saved
+        if not self.file_manager.auto_save_enabled:
+            self._save_risk_categorized_results(results, analysis_format)
         else:
-            # Manual filename entry
-            filename = Prompt.ask(
-                "Enter filename (without extension)",
-                default=f"idork_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            )
+            console.print(f"[green]✅ Results already auto-saved with risk categorization![/green]")
 
-            saved_path = self.file_manager.save_results(results, filename, format_choice)
-            if saved_path:
-                console.print(f"[green]✅ Results saved to: {saved_path}[/green]")
+            # Show auto-save file locations
+            console.print(f"\n[bold cyan]📁 Auto-saved files:[/bold cyan]")
+            for risk_level in ['HIGH', 'MEDIUM', 'LOW']:
+                if risk_level in self.file_manager.risk_based_files:
+                    count = self.file_manager.risk_counts[risk_level]
+                    if count > 0:
+                        color = "red" if risk_level == 'HIGH' else "yellow" if risk_level == 'MEDIUM' else "green"
+                        console.print(f"[{color}]{risk_level} Risk ({count} URLs):[/{color}]")
+                        for format_type, filepath in self.file_manager.risk_based_files[risk_level].items():
+                            if filepath:
+                                console.print(f"[dim]  • {format_type.upper()}: {filepath}[/dim]")
 
-    def main_menu(self):
-        """Enhanced main application flow with integrated auto-save"""
-        while True:
-            try:
-                # Step 1: Welcome
-                self.show_welcome()
+        # Ask if user wants additional final save
+        save_additional = Confirm.ask("Save additional final copy?", default=False)
+        if save_additional:
+            self._save_final_results_interactive(results)
 
-                # Step 2: Choose search engine
-                engine = self.choose_search_engine()
+    def _save_risk_categorized_results(self, results, format_choice):
+        """Save results categorized by risk level"""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-                # Step 3: Setup proxy (optional)
-                self.setup_proxy()
+        formats_to_save = []
+        if format_choice == "all":
+            formats_to_save = ["txt", "json", "csv"]
+        else:
+            formats_to_save = [format_choice]
 
-                # Step 4: Get dorks
-                dorks = self.get_dorks()
-                if not dorks:
-                    console.print("[red]❌ No dorks provided. Exiting.[/red]")
-                    break
+        # Create risk-based files
+        risk_categories = {
+            'HIGH': [r for r in results if r.get('risk_level') == 'HIGH'],
+            'MEDIUM': [r for r in results if r.get('risk_level') == 'MEDIUM'],
+            'LOW': [r for r in results if r.get('risk_level') == 'LOW']
+        }
 
-                # Step 5: Configure search (now includes auto-save)
-                max_results, verify_urls, auto_save_settings = self.configure_search()
+        risk_descriptions = {
+            'HIGH': 'Potentially Vulnerable - High Risk URLs',
+            'MEDIUM': 'Worth Investigating - Medium Risk URLs',
+            'LOW': 'Probably Safe - Low Risk URLs'
+        }
 
-                # Step 6: Setup auto-save if enabled
-                if auto_save_settings["enabled"]:
-                    self.file_manager.auto_save_interval = auto_save_settings["interval"]
-                    self.file_manager.setup_auto_save(
-                        auto_save_settings["filename"],
-                        auto_save_settings["formats"]
-                    )
-                else:
-                    self.file_manager.auto_save_enabled = False
+        for risk_level, risk_results in risk_categories.items():
+            if not risk_results:
+                continue
 
-                # Step 7: Run search
-                results = self.run_search(dorks, engine, max_results)
+            for format_type in formats_to_save:
+                filename = f"idork_{risk_level.lower()}_risk_{timestamp}.{format_type}"
+                filepath = self.file_manager.output_dir / filename
 
-                # Step 8: Verify URLs if requested
-                if verify_urls and results:
-                    console.print("\n[blue]🔍 Verifying URLs...[/blue]")
-                    results = self.url_verifier.verify_batch(results)
+                try:
+                    if format_type == "txt":
+                        with open(filepath, 'w', encoding='utf-8') as f:
+                            f.write(f"iDork v2.0 Enhanced - {risk_descriptions[risk_level]}\n")
+                            f.write("=" * 60 + "\n")
+                            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                            f.write(f"Risk Level: {risk_level}\n")
+                            f.write(f"Total Results: {len(risk_results)}\n")
+                            f.write("=" * 60 + "\n\n")
 
-                    # Filter out inaccessible URLs if user wants
-                    accessible_only = Confirm.ask("Show only accessible URLs?", default=False)
-                    if accessible_only:
-                        accessible_results = [r for r in results if r.get("accessible", True)]
-                        console.print(f"[cyan]Filtered to {len(accessible_results)} accessible URLs[/cyan]")
-                        results = accessible_results
+                            for i, result in enumerate(risk_results, 1):
+                                url = result.get("url", "N/A")
+                                title = result.get("title", "N/A")
+                                engine = result.get("engine", "unknown")
+                                query = result.get("query", "N/A")
+                                timestamp_str = result.get("timestamp", "N/A")
+                                risk_details = result.get("risk_details", "No details")
 
-                # Step 9: Show results
-                self.show_results_preview(results)
+                                f.write(f"{i}. [{engine.upper()}] {title}\n")
+                                f.write(f"   URL: {url}\n")
+                                f.write(f"   Query: {query}\n")
+                                f.write(f"   Risk: {risk_level} - {risk_details}\n")
+                                f.write(f"   Time: {timestamp_str}\n")
 
-                # Step 10: Save final results (separate from auto-save)
-                self.save_final_results_interactive(results, auto_save_settings)
+                                # Add vulnerability details for HIGH risk
+                                if risk_level == 'HIGH' and result.get('vulnerability_info'):
+                                    vuln_details = ', '.join(result['vulnerability_info'][:3])
+                                    f.write(f"   Vulnerabilities: {vuln_details}\n")
 
-                # Step 11: Ask to continue
-                console.print("\n[bold green]🎉 Search Complete![/bold green]")
+                                f.write("-" * 50 + "\n")
 
-                if not Confirm.ask("Do you want to run another search?", default=False):
-                    break
+                    elif format_type == "json":
+                        with open(filepath, 'w', encoding='utf-8') as f:
+                            json.dump({
+                                "metadata": {
+                                    "tool": "iDork v2.0 Enhanced",
+                                    "risk_level": risk_level,
+                                    "description": risk_descriptions[risk_level],
+                                    "generated": datetime.now().isoformat(),
+                                    "total_results": len(risk_results)
+                                },
+                                "results": risk_results
+                            }, f, indent=2, ensure_ascii=False)
 
-                # Reset for next search
-                self.results = []
-                self.stats = {
-                    "start_time": None,
-                    "end_time": None,
-                    "total_queries": 0,
-                    "total_results": 0,
-                    "successful_queries": 0
-                }
+                    elif format_type == "csv":
+                        with open(filepath, 'w', newline='', encoding='utf-8') as f:
+                            writer = csv.writer(f)
+                            writer.writerow(["#", "URL", "Title", "Engine", "Query", "Risk_Level", "Risk_Details",
+                                             "Vulnerability_Info", "Timestamp"])
 
-            except KeyboardInterrupt:
-                console.print("\n\n[yellow]👋 Thanks for using iDork! Goodbye![/yellow]")
-                break
-            except Exception as e:
-                console.print(f"\n[red]❌ Unexpected error: {e}[/red]")
-                if Confirm.ask("Do you want to continue?", default=True):
-                    continue
-                else:
-                    break
+                            for i, result in enumerate(risk_results, 1):
+                                vuln_info = '; '.join(result.get('vulnerability_info', []))
+                                writer.writerow([
+                                    i,
+                                    result.get("url", ""),
+                                    result.get("title", ""),
+                                    result.get("engine", ""),
+                                    result.get("query", ""),
+                                    risk_level,
+                                    result.get("risk_details", ""),
+                                    vuln_info,
+                                    result.get("timestamp", "")
+                                ])
 
-    def save_final_results_interactive(self, results, auto_save_settings):
-        """Enhanced save results with auto-save awareness"""
-        if not results:
-            return
+                    color = "red" if risk_level == 'HIGH' else "yellow" if risk_level == 'MEDIUM' else "green"
+                    console.print(f"[{color}]💾 {risk_level} risk results saved to: {filepath}[/{color}]")
 
+                except Exception as e:
+                    console.print(f"[red]❌ Error saving {risk_level} risk file ({format_type}): {e}[/red]")
+
+    def _save_final_results_interactive(self, results):
+        """Interactive save for final results"""
         console.print("\n[bold blue]💾 Final Results Save[/bold blue]")
-
-        if auto_save_settings["enabled"]:
-            console.print(f"[green]✅ Your results are already auto-saved![/green]")
-            console.print(f"[cyan]Auto-saved files contain {self.file_manager.total_saved} results[/cyan]")
-
-            save_additional = Confirm.ask("Save additional final copy?", default=False)
-            if not save_additional:
-                console.print("[cyan]📁 Results are safely stored in auto-save files[/cyan]")
-                return
-        else:
-            save_results = Confirm.ask("Do you want to save the results?", default=True)
-            if not save_results:
-                return
 
         # Choose format for final save
         format_choice = Prompt.ask(
@@ -1898,16 +2335,94 @@ class SimpleiDork:
                     console.print(f"[green]✅ Final results saved successfully![/green]")
         else:
             # Manual filename entry
-            default_name = "idork_final_results" if not auto_save_settings[
-                "enabled"] else f"{auto_save_settings['filename']}_final"
             filename = Prompt.ask(
                 "Enter final filename (without extension)",
-                default=f"{default_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                default=f"idork_final_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             )
 
             saved_path = self.file_manager.save_results(results, filename, format_choice)
             if saved_path:
                 console.print(f"[green]✅ Final results saved to: {saved_path}[/green]")
+
+    def main_menu(self):
+        """Enhanced main application flow with integrated auto-save and risk analysis"""
+        while True:
+            try:
+                # Step 1: Welcome
+                self.show_welcome()
+
+                # Step 2: Choose search engine
+                engine = self.choose_search_engine()
+
+                # Step 3: Setup proxy (optional)
+                self.setup_proxy()
+
+                # Step 4: Get dorks
+                dorks = self.get_dorks()
+                if not dorks:
+                    console.print("[red]❌ No dorks provided. Exiting.[/red]")
+                    break
+
+                # Step 5: Configure search (now includes enhanced auto-save)
+                max_results, verify_urls, auto_save_settings = self.configure_search()
+
+                # Step 6: Setup enhanced auto-save if enabled
+                if auto_save_settings["enabled"]:
+                    self.file_manager.auto_save_interval = auto_save_settings["interval"]
+                    self.file_manager.setup_auto_save(
+                        auto_save_settings["filename"],
+                        auto_save_settings["formats"],
+                        auto_save_settings["risk_based"]
+                    )
+                else:
+                    self.file_manager.auto_save_enabled = False
+
+                # Step 7: Run enhanced search with analysis
+                results = self.run_search_with_analysis(dorks, engine, max_results)
+
+                # Step 8: Verify URLs if requested
+                if verify_urls and results:
+                    console.print("\n[blue]🔍 Verifying URLs...[/blue]")
+                    results = self.url_verifier.verify_batch(results)
+
+                    # Filter out inaccessible URLs if user wants
+                    accessible_only = Confirm.ask("Show only accessible URLs?", default=False)
+                    if accessible_only:
+                        accessible_results = [r for r in results if r.get("accessible", True)]
+                        console.print(f"[cyan]Filtered to {len(accessible_results)} accessible URLs[/cyan]")
+                        results = accessible_results
+
+                # Step 9: Show enhanced results with risk analysis
+                self.show_results_preview(results)
+
+                # Step 10: Analyze and save results with risk categorization
+                self.analyze_and_save_results(results)
+
+                # Step 11: Ask to continue
+                console.print("\n[bold green]🎉 Enhanced Search Complete![/bold green]")
+
+                if not Confirm.ask("Do you want to run another search?", default=False):
+                    break
+
+                # Reset for next search
+                self.results = []
+                self.stats = {
+                    "start_time": None,
+                    "end_time": None,
+                    "total_queries": 0,
+                    "total_results": 0,
+                    "successful_queries": 0
+                }
+
+            except KeyboardInterrupt:
+                console.print("\n\n[yellow]👋 Thanks for using iDork Enhanced! Goodbye![/yellow]")
+                break
+            except Exception as e:
+                console.print(f"\n[red]❌ Unexpected error: {e}[/red]")
+                if Confirm.ask("Do you want to continue?", default=True):
+                    continue
+                else:
+                    break
 
 
 def show_installation_help():
@@ -1965,7 +2480,7 @@ def check_dependencies():
 
 def main():
     """Main entry point - no arguments needed!"""
-    console.print("[bold cyan]🚀 Starting iDork v2.0...[/bold cyan]")
+    console.print("[bold cyan]🚀 Starting iDork v2.0 Enhanced...[/bold cyan]")
 
     # Check dependencies
     if not check_dependencies():
@@ -1989,7 +2504,7 @@ def main():
             console.print(f"[dim]• {warning}[/dim]")
 
     try:
-        # Initialize and run the app
+        # Initialize and run the enhanced app
         app = SimpleiDork()
         app.main_menu()
 
@@ -2004,25 +2519,28 @@ def main():
 def show_help():
     """Show help information"""
     help_text = """
-[bold cyan]iDork v2.0 - User Friendly Interactive Mode[/bold cyan]
+[bold cyan]iDork v2.0 Enhanced - User Friendly Interactive Mode with Risk Analysis[/bold cyan]
 
 [bold yellow]How to use:[/bold yellow]
 1. Just run: python idork.py
 2. Follow the interactive prompts
 3. No complex commands needed!
 
-[bold yellow]Features:[/bold yellow]
-• 🔍 Multiple search engines
-• 📁 Easy file picker
+[bold yellow]Enhanced Features:[/bold yellow]
+• 🔍 Multiple search engines (Google, Bing, Yahoo, DuckDuckGo, Yandex)
+• 📁 Easy file picker for dork lists
 • 📝 Pre-made dork templates  
 • 🔒 Optional proxy support
-• 💾 Multiple output formats
+• 💾 Multiple output formats with risk separation
 • ✅ URL verification
-• 📊 Detailed statistics
+• 🚨 Vulnerability analysis with risk scoring
+• 📊 Risk-based auto-save (HIGH/MEDIUM/LOW)
+• 🎯 Automated dork suggestions
+• 📈 Detailed statistics with security analysis
 
 [bold yellow]File Formats Supported:[/bold yellow]
 • Input: .txt files with dorks (one per line)
-• Output: .txt, .json, .csv formats
+• Output: .txt, .json, .csv formats (with risk categorization)
 
 [bold yellow]Example dork file:[/bold yellow]
 site:example.com login
@@ -2030,29 +2548,16 @@ inurl:admin
 filetype:pdf confidential
 "index of" password
 
+[bold yellow]Risk Analysis Features:[/bold yellow]
+• Automatic parameter analysis for vulnerabilities
+• Risk-based file separation (HIGH/MEDIUM/LOW)
+• Real-time vulnerability scoring
+• Automated dork suggestions based on findings
+
 [bold green]Just run the program and follow the prompts! 🚀[/bold green]
 """
 
     console.print(Panel(help_text, border_style="green"))
-
-
-if __name__ == "__main__":
-    # Check if user needs help
-    if len(sys.argv) > 1:
-        if sys.argv[1] in ['-h', '--help', 'help']:
-            show_help()
-            sys.exit(0)
-        elif sys.argv[1] in ['-v', '--version', 'version']:
-            console.print("[bold cyan]iDork v2.0 - Interactive Edition[/bold cyan]")
-            console.print("[green]Developer: root (@rootbck)[/green]")
-            sys.exit(0)
-        else:
-            console.print("[yellow]⚠️ This version is fully interactive - no arguments needed![/yellow]")
-            console.print("[cyan]Just run: python idork.py[/cyan]")
-            console.print("[dim]Use 'python idork.py help' for more information[/dim]")
-
-    # Run the main application
-    main()
 
 
 # Additional utility functions for advanced users
@@ -2064,15 +2569,30 @@ def quick_search(dork, engine="duckduckgo", max_results=50):
     return results
 
 
-def batch_search(dorks, engine="duckduckgo", max_results=50):
-    """Batch search function for advanced users"""
+def batch_search_with_analysis(dorks, engine="duckduckgo", max_results=50):
+    """Enhanced batch search function with vulnerability analysis"""
     config = SimpleConfig().config
     search_engine = SimpleSearchEngine(config)
+    analyzer = URLAnalyzer()
     all_results = []
 
     for dork in dorks:
         try:
             results = search_engine.search(dork, engine, max_results)
+
+            # Analyze URLs for vulnerabilities
+            if results:
+                urls = [r.get('url', '') for r in results if r.get('url')]
+                analyses = analyzer.analyze_batch(urls)
+
+                # Merge analysis with results
+                analysis_map = {a.get('url', ''): a for a in analyses}
+                for result in results:
+                    url = result.get('url', '')
+                    analysis = analysis_map.get(url, {})
+                    result['risk_level'] = analysis.get('risk_level', 'LOW')
+                    result['risk_details'] = analysis.get('potential_vulns', [])
+
             all_results.extend(results)
             time.sleep(config["request_delay"])
         except Exception as e:
@@ -2081,6 +2601,25 @@ def batch_search(dorks, engine="duckduckgo", max_results=50):
     return all_results
 
 
+if __name__ == "__main__":
+    # Check if user needs help
+    if len(sys.argv) > 1:
+        if sys.argv[1] in ['-h', '--help', 'help']:
+            show_help()
+            sys.exit(0)
+        elif sys.argv[1] in ['-v', '--version', 'version']:
+            console.print("[bold cyan]iDork v2.0 Enhanced - Interactive Edition with Risk Analysis[/bold cyan]")
+            console.print("[green]Developer: root (@rootbck)[/green]")
+            console.print("[yellow]Enhanced with vulnerability analysis and risk-based categorization[/yellow]")
+            sys.exit(0)
+        else:
+            console.print("[yellow]⚠️ This version is fully interactive - no arguments needed![/yellow]")
+            console.print("[cyan]Just run: python idork.py[/cyan]")
+            console.print("[dim]Use 'python idork.py help' for more information[/dim]")
+
+    # Run the main enhanced application
+    main()
+
 # Export key classes for advanced users who want to import
 __all__ = [
     'SimpleiDork',
@@ -2088,6 +2627,7 @@ __all__ = [
     'DorkTemplates',
     'FileManager',
     'URLVerifier',
+    'URLAnalyzer',
     'quick_search',
-    'batch_search'
+    'batch_search_with_analysis'
 ]
